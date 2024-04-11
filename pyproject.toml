@@ -1,0 +1,83 @@
+[tool.black]
+line-length = 100
+
+[tool.poetry]
+name = "FAST-OAD-CS23"
+version = "1.3.0"
+description = "FAST-OAD-CS23 is a framework for performing rapid Overall Aircraft Design for General Aircraft"
+readme = "README.md"
+authors = [
+    "Florent LUTZ <Florent.LUTZ2@isae-supaero.fr>",
+    "Aurelien REYSSET <Aurelien.REYSSET@isae-supaero.fr>",
+    "Eric NGUYEN VAN <Eric.Nguyen_Van@onera.fr>"
+]
+packages = [
+    { include = "fastga", from = "src" },
+]
+exclude = ["**/unitary_tests/**"]
+
+homepage = "https://github.com/supaero-aircraft-design/FAST-GA"
+keywords = [
+    "aircraft",
+    "design",
+    "multi-disciplinary"
+]
+license = "GPL-3.0-only"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+
+[tool.poetry.dependencies]
+# IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
+# ReadTheDocs to be able to compile the documentation.
+# A pre-commit hook has been added to do this task. As a result, any modification
+# of poetry.lock file will modify docs/requirements.txt and make
+# the commit fail because "files were modified by this hook". In that case,
+# doing again the commit including changes in docs/requirements.txt will succeed.
+python = "^3.8, <3.11"
+fast-oad-core = "^1.7.1"
+stdatm = ">=0.2.0"
+pyparsing = "*"
+
+[tool.poetry.extras]
+jupyterlab = ["jupyterlab"]
+
+[tool.poetry.group.dev.dependencies]
+wheel = "*"
+matplotlib = "^3.1.2"
+click = "8.0.4"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^6.2"
+pytest-cov = "^3.0"
+nbval = "^0.9.6"
+
+[tool.poetry.group.doc.dependencies]
+sphinx = "^4.1.2"
+sphinx-rtd-theme = "^1.0"
+sphinxcontrib-bibtex = "^2.3.0"
+
+[tool.poetry.group.lint.dependencies]
+pre-commit = "^2.14.1"
+black = { version = "21.9b0", extras = ["jupyter"], allow-prereleases = true } # if version is changed, please change it also in .pre-commit-config.yaml file.
+pylint = "^2.10.2"
+flake8 = "^4.0.1"
+
+[tool.poetry.plugins."fastoad.plugins"]
+"cs23" = "fastga"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
