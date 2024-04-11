@@ -144,7 +144,7 @@
     </geometry>
     <propulsion>
       <fuel_type is_input="True">3.0<!--1=Avgas ICE engine / 2=Diesel ICE engine / 3=Jet A1--></fuel_type>
-      <max_rpm units="min**-1" is_input="True">2200.0<!--maximum number of rotation per minute on the engine--></max_rpm>
+      <max_rpm units="min**-1" is_input="True">2198.0<!--maximum number of rotation per minute on the engine from TCDS--></max_rpm>
       <turboprop>
         <design_point>
           <OPR is_input="True">12.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
