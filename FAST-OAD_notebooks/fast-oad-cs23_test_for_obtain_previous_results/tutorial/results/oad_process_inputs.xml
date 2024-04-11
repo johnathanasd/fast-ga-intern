@@ -4,7 +4,7 @@
       <NPAX_design is_input="True">19.0<!--(POH) top-level requirement: number of passengers for the design mission, assuming a classic eco/business class repartition--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">8.0<!--(for 19pax and 1375kg payload) top-level requirement: luggage mass per passenger for the design mission--></luggage_mass_design>
       <range units="NM" is_input="True">400.0<!--(POH, for 1375kg payload) top-level requirement: design range--></range>
-      <v_approach units="kn" is_input="True">71.17<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
+      <v_approach units="kn" is_input="True">75.4<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
       <v_cruise units="kn" is_input="True">182.0<!--(POH, 10000ft) top-level requirement: cruise speed--></v_cruise>
     </TLAR>
     <geometry>
