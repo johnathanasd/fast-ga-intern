@@ -143,20 +143,20 @@
     </geometry>
     <propulsion>
       <fuel_type is_input="True">3.0<!--1=Avgas ICE engine / 2=Diesel ICE engine / 3=Jet A1--></fuel_type>
-      <max_rpm units="min**-1" is_input="True">2198.0<!--maximum number of rotation per minute on the engine from TCDS--></max_rpm>
+      <max_rpm units="min**-1" is_input="True">2200.0<!--maximum number of rotation per minute on the engine from TCDS--></max_rpm>
       <turboprop>
         <design_point>
-          <OPR is_input="True">12.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
+          <OPR is_input="True">12.8<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
           <altitude units="m" is_input="True">0.0<!--(POH) altitude of the turboprop design point--></altitude>
           <mach is_input="True">0.0<!--mach number at the turboprop design point--></mach>
-          <power units="hp" is_input="True">750.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
-          <turbine_entry_temperature units="degK" is_input="True">1400.0<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
+          <power units="hp" is_input="True">1050.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
+          <turbine_entry_temperature units="degK" is_input="True">1328.75<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
         </design_point>
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
-          <itt_limit units="degK" is_input="True">1125.0<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
-          <opr_limit is_input="True">12.5<!--pressure ratio limitation in off-design point--></opr_limit>
-          <power_limit units="W" is_input="True">634000.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
+          <itt_limit units="degK" is_input="True">1063.0<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
+          <opr_limit is_input="True">9.1<!--pressure ratio limitation in off-design point--></opr_limit>
+          <power_limit units="hp" is_input="True">750.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
         </off_design>
       </turboprop>
     </propulsion>
@@ -342,7 +342,7 @@
         <electric_power_offtake units="kW" is_input="True">10.0<!--power used for electrical generation obtained from the HP shaft--></electric_power_offtake>
         <bleed>
           <inter_compressor is_input="True">0.04<!--total compressor airflow extracted after the first  compression stage (in station 25)--></inter_compressor>
-          <turbine_cooling is_input="True">0.05<!--percentage of the total aspirated airflow used for turbine cooling (fixed)--></turbine_cooling>
+          <turbine_cooling is_input="True">0.0525<!--percentage of the total aspirated airflow used for turbine cooling (fixed)--></turbine_cooling>
         </bleed>
         <design_point>
           <first_stage_pressure_ratio is_input="True">0.25<!--ratio of the first stage pressure ratio to the OPR at the design point--></first_stage_pressure_ratio>
