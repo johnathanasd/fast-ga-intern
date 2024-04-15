@@ -46,11 +46,11 @@
         <length units="m" is_input="True">12.87<!--(11.87, 15.77) total length of the aircraft--></length>
         <luggage_length units="m" is_input="True">1.25<!--(2.07) length of the luggage compartment--></luggage_length>
         <maximum_height units="m" is_input="True">2.09<!--maximum fuselage height--></maximum_height>
-        <maximum_width units="m" is_input="True">1.7<!--(1.42,1.71) maximum fuselage width--></maximum_width>
+        <maximum_width units="m" is_input="True">1.75<!--(1.42,1.71) maximum fuselage width--></maximum_width>
         <rear_length units="m" is_input="True">3.34<!--(3.05) length of the rear cone of the aircraft--></rear_length>
       </fuselage>
       <horizontal_tail>
-        <aspect_ratio is_input="True">4.11<!--horizontal tail aspect ratio--></aspect_ratio>
+        <aspect_ratio is_input="True">4.35<!--horizontal tail aspect ratio--></aspect_ratio>
         <elevator_chord_ratio is_input="True">0.4<!--(0.8) elevator chord ratio--></elevator_chord_ratio>
         <sweep_25 units="deg" is_input="True">0.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
         <taper_ratio is_input="True">1.0<!--taper ratio of horizontal tail--></taper_ratio>
@@ -78,15 +78,15 @@
         <twist_vect units="deg" is_input="True">[20.0, 20.0, 15.5, 10.0, 5.0, 1.0, -2.0, -4.0, -5.0, -5.5]<!--propeller twist angle defined at radius ratio points--></twist_vect>
       </propeller>
       <vertical_tail>
-        <aspect_ratio is_input="True">1.68<!--(1.35, 1.48) aspect ratio of vertical tail--></aspect_ratio>
-        <sweep_25 units="deg" is_input="True">20.16<!--(35.78) sweep angle at 25% chord of vertical tail--></sweep_25>
-        <taper_ratio is_input="True">0.52<!--(0.56, 0.58) taper ratio of vertical tail--></taper_ratio>
+        <aspect_ratio is_input="True">1.915<!--(1.35, 1.48,1.68) aspect ratio of vertical tail--></aspect_ratio>
+        <sweep_25 units="deg" is_input="True">25.0<!--(35.78) sweep angle at 25% chord of vertical tail--></sweep_25>
+        <taper_ratio is_input="True">0.58<!--(0.56, 0.58) taper ratio of vertical tail--></taper_ratio>
         <thickness_ratio is_input="True">0.14<!--thickness ratio of vertical tail--></thickness_ratio>
         <max_thickness>
           <x_ratio is_input="True">0.1<!--position of the point of maximum thickness as a ratio of vertical tail chord--></x_ratio>
         </max_thickness>
         <rudder>
-          <chord_ratio is_input="True">0.44<!--(0.44, 0.59) flap rudder as a percentage of the wing
+          <chord_ratio is_input="True">0.45<!--(0.44, 0.59) flap rudder as a percentage of the wing
 				  chord--></chord_ratio>
           <max_deflection units="deg" is_input="True">25.0<!--(35.0) rudder maximum deflection--></max_deflection>
         </rudder>
@@ -108,7 +108,7 @@
         <aileron>
           <chord_ratio is_input="True">0.2<!--aileron chord as a percentage of the wing chord--></chord_ratio>
           <max_deflection units="deg" is_input="True">25.0<!--aileron deflection--></max_deflection>
-          <span_ratio is_input="True">0.2<!--(prev 0.026) aileron span as a percentage of the wing
+          <span_ratio is_input="True">0.51<!--(prev 0.026) aileron span as a percentage of the wing
 				  span--></span_ratio>
         </aileron>
         <kink>
@@ -146,16 +146,16 @@
       <max_rpm units="min**-1" is_input="True">2200.0<!--maximum number of rotation per minute on the engine from TCDS--></max_rpm>
       <turboprop>
         <design_point>
-          <OPR is_input="True">12.8<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
+          <OPR is_input="True">12.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
           <altitude units="m" is_input="True">0.0<!--(POH) altitude of the turboprop design point--></altitude>
           <mach is_input="True">0.0<!--mach number at the turboprop design point--></mach>
-          <power units="hp" is_input="True">1050.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
+          <power units="hp" is_input="True">1300.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
           <turbine_entry_temperature units="degK" is_input="True">1328.75<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
         </design_point>
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
           <itt_limit units="degK" is_input="True">1063.0<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
-          <opr_limit is_input="True">9.1<!--pressure ratio limitation in off-design point--></opr_limit>
+          <opr_limit is_input="True">12.5<!--pressure ratio limitation in off-design point--></opr_limit>
           <power_limit units="hp" is_input="True">750.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
         </off_design>
       </turboprop>
@@ -365,7 +365,7 @@
     </propulsion>
     <weight>
       <aircraft>
-        <MLW_MZFW_ratio is_input="True">1.16</MLW_MZFW_ratio>
+        <MLW_MZFW_ratio is_input="True">1.24<!--(1.16) before--></MLW_MZFW_ratio>
         <CG>
           <range is_input="True">0.16<!--(0.23) distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
           <aft>
