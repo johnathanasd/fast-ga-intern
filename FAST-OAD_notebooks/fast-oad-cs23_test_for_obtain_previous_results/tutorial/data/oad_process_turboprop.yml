@@ -1,4 +1,4 @@
-title: Sample weight computation applied to TBM 900
+title: Sample weight computation applied to Twin otter DHC-6 400s
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
@@ -27,14 +27,14 @@ model:
         aerodynamics_lowspeed:
             id: fastga.aerodynamics.lowspeed.legacy
             propulsion_id: fastga.wrapper.propulsion.basicTurbopropMapped
-            wing_airfoil: naca63015A.af
+            wing_airfoil: naca63_415.af
             result_folder_path: D:/tmp
             use_openvsp: true
             compute_slipstream: true
         aerodynamics_highspeed:
             id: fastga.aerodynamics.highspeed.legacy
             propulsion_id: fastga.wrapper.propulsion.basicTurbopropMapped
-            wing_airfoil: naca63015A.af
+            wing_airfoil: naca63_415.af
             result_folder_path: D:/tmp
             compute_mach_interpolation: false
             use_openvsp: true

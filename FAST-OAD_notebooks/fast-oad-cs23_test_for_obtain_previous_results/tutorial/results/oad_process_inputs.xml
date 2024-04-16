@@ -15,7 +15,7 @@
         <pressurized is_input="True">0.0<!--Cabin pressurization; 0.0 for no pressurization, 1.0 for pressurization--></pressurized>
         <doors>
           <height units="m" is_input="True">1.15</height>
-          <number is_input="True">2.0</number>
+          <number is_input="True">3.0</number>
           <width units="m" is_input="True">0.76</width>
         </doors>
         <luggage>
@@ -38,7 +38,7 @@
         </seats>
       </cabin>
       <flap>
-        <chord_ratio is_input="True">0.2<!--mean value of (flap chord)/(section chord)--></chord_ratio>
+        <chord_ratio is_input="True">0.23<!--mean value of (flap chord)/(section chord)--></chord_ratio>
       </flap>
       <fuselage>
         <PAX_length units="m" is_input="True">3.79<!--(5.64 before) length of the passenger compartment--></PAX_length>
@@ -58,7 +58,7 @@
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.31<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">7.164<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
@@ -93,7 +93,7 @@
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.21<!--(7.31, 6.01) distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">7.49<!--(7.31, 6.01) distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
@@ -106,7 +106,7 @@
         <thickness_ratio is_input="True">0.16<!--mean thickness ratio of wing--></thickness_ratio>
         <twist units="deg" is_input="True">-2.0<!--Negative twist means tip AOA is smaller than root--></twist>
         <aileron>
-          <chord_ratio is_input="True">0.2<!--aileron chord as a percentage of the wing chord--></chord_ratio>
+          <chord_ratio is_input="True">0.23<!--aileron chord as a percentage of the wing chord--></chord_ratio>
           <max_deflection units="deg" is_input="True">25.0<!--aileron deflection--></max_deflection>
           <span_ratio is_input="True">0.51<!--(prev 0.026) aileron span as a percentage of the wing
 				  span--></span_ratio>
@@ -131,12 +131,12 @@
         <engine>
           <count is_input="True">2.0<!--number of engine--></count>
           <layout is_input="True">1.0<!--position of engines (1=under the wing / 2=rear fuselage / 3=nose)--></layout>
-          <y_ratio is_input="True">0.28<!--(0.29) engine position along wing span (if layout=1-2)--></y_ratio>
+          <y_ratio is_input="True">0.29<!--(0.29) engine position along wing span (if layout=1-2)--></y_ratio>
         </engine>
         <tank>
           <LE_chord_percentage is_input="True">0.05<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
           <TE_chord_percentage is_input="True">0.05<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
-          <y_ratio_tank_beginning is_input="True">0.11<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
+          <y_ratio_tank_beginning is_input="True">0.095<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
           <y_ratio_tank_end is_input="True">0.99<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
         </tank>
       </propulsion>
@@ -146,16 +146,16 @@
       <max_rpm units="min**-1" is_input="True">2200.0<!--maximum number of rotation per minute on the engine from TCDS--></max_rpm>
       <turboprop>
         <design_point>
-          <OPR is_input="True">12.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
+          <OPR is_input="True">9.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
           <altitude units="m" is_input="True">0.0<!--(POH) altitude of the turboprop design point--></altitude>
           <mach is_input="True">0.0<!--mach number at the turboprop design point--></mach>
-          <power units="hp" is_input="True">1300.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
-          <turbine_entry_temperature units="degK" is_input="True">1328.75<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
+          <power units="hp" is_input="True">1125.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
+          <turbine_entry_temperature units="degK" is_input="True">1250.0<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
         </design_point>
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
           <itt_limit units="degK" is_input="True">1063.0<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
-          <opr_limit is_input="True">12.5<!--pressure ratio limitation in off-design point--></opr_limit>
+          <opr_limit is_input="True">9.5<!--pressure ratio limitation in off-design point--></opr_limit>
           <power_limit units="hp" is_input="True">750.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
         </off_design>
       </turboprop>
