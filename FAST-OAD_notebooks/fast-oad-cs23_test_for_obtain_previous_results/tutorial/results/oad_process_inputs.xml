@@ -6,6 +6,7 @@
       <range units="NM" is_input="True">400.0<!--(POH, for 1375kg payload) top-level requirement: design range--></range>
       <v_approach units="kn" is_input="True">75.4<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
       <v_cruise units="kn" is_input="True">182.0<!--(POH, 10000ft) top-level requirement: cruise speed--></v_cruise>
+      <v_max_sl units="kn" is_input="True">170.0<!--maximum speed at sea level--></v_max_sl>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -19,7 +20,7 @@
           <width units="m" is_input="True">0.76</width>
         </doors>
         <luggage>
-          <mass_max units="kg" is_input="True">30.0<!--30 before, maximum luggage mass--></mass_max>
+          <mass_max units="kg" is_input="True">357.0<!--30 before, maximum luggage mass--></mass_max>
         </luggage>
         <windows>
           <height units="m" is_input="True">0.3</height>
@@ -107,9 +108,6 @@
         <twist units="deg" is_input="True">-2.0<!--Negative twist means tip AOA is smaller than root--></twist>
         <aileron>
           <chord_ratio is_input="True">0.23<!--aileron chord as a percentage of the wing chord--></chord_ratio>
-          <max_deflection units="deg" is_input="True">25.0<!--aileron deflection--></max_deflection>
-          <span_ratio is_input="True">0.51<!--(prev 0.026) aileron span as a percentage of the wing
-				  span--></span_ratio>
         </aileron>
         <kink>
           <span_ratio is_input="True">0.0<!--ratio (Y-position of kink)/(semi-span)--></span_ratio>
@@ -179,13 +177,13 @@
       <flaps>
         <landing>
           <CL is_input="True">1.3125<!--(Gudmundsson p.446) lift coefficient increment due to flaps deployment in landing configuration--></CL>
-          <CL_max is_input="True">1.05<!--maximum lift coefficient increment due to flaps deployment in landing configuration--></CL_max>
+          <CL_max is_input="True">0.985<!--maximum lift coefficient increment due to flaps deployment in landing configuration--></CL_max>
           <CM is_input="True">-0.24648012559668536<!--additional pitching moment coefficient ue to the deployment of flaps in landing configuration--></CM>
         </landing>
         <takeoff>
           <CD is_input="True">0.00868<!--(Gudmundsson p.724) additional drag coefficient due to flaps deployment in takeoff configuration--></CD>
           <CL is_input="True">1.3<!--lift coefficient increment due to flaps deployment in takeoff configuration--></CL>
-          <CL_max is_input="True">1.01<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
+          <CL_max is_input="True">0.95<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
           <CM is_input="True">-0.08448449127122522<!--additional pitching moment coefficient due to the deployment of flaps in takeoff configuration--></CM>
         </takeoff>
       </flaps>
@@ -208,15 +206,12 @@
           <k_factor is_input="True">1.0<!--proportional corrective factor for vertical tail mass--></k_factor>
         </vertical_tail>
         <wing>
-          <punctual_mass>
-            <mass is_input="True">0.0<!--mass of the punctual masses on the wing used for wing load computation--></mass>
-            <y_ratio is_input="True">0.0<!--position (as a percent of wing semi-span) of the punctual masses on the wing used for wing load computation, only positive ratio will be considered--></y_ratio>
-          </punctual_mass>
+          <k_factor is_input="True">1.0<!--proportional corrective factor for wing mass--></k_factor>
         </wing>
       </airframe>
       <furniture>
         <passenger_seats>
-          <mass units="kg" is_input="True">146.3<!--(Roskam part 3, 7.7 lbs per seat) passenger/pilot seats total mass--></mass>
+          <mass units="kg" is_input="True">178.5<!--(Roskam part 3, 7.7 lbs per seat) passenger/pilot seats total mass--></mass>
         </passenger_seats>
       </furniture>
       <systems>
@@ -227,25 +222,6 @@
     </weight>
     <mission>
       <sizing>
-        <cs23>
-          <safety_factor is_input="True">1.5</safety_factor>
-          <characteristic_speed>
-            <va units="knot" is_input="True">86.17<!--maneuvering speed Vs.sqrt(n)--></va>
-            <vc units="knot" is_input="True">182.0<!--design cruise speed--></vc>
-            <vd units="knot" is_input="True">182.0<!--limit speed--></vd>
-          </characteristic_speed>
-          <sizing_factor>
-            <ultimate_aircraft is_input="True">5.205<!--ultimate load factor that the aircraft will experience (default value is 5.7)--></ultimate_aircraft>
-            <ultimate_mtow>
-              <negative is_input="True">-1.78<!--CS-23 commuter airplane--></negative>
-              <positive is_input="True">3.47<!--CS-23 commuter airplane--></positive>
-            </ultimate_mtow>
-            <ultimate_mzfw>
-              <negative is_input="True">-1.78</negative>
-              <positive is_input="True">3.47</positive>
-            </ultimate_mzfw>
-          </sizing_factor>
-        </cs23>
         <landing>
           <elevator_angle units="deg" is_input="True">-30.0<!--elevator maximum angle during landing phase in sizing mission--></elevator_angle>
           <target_sideslip units="deg" is_input="True">15.0</target_sideslip>
@@ -265,6 +241,14 @@
           <speed units="kn" is_input="True">20.0<!--ground velocity during taxi out phase--></speed>
           <thrust_rate is_input="True">0.2<!--thrust rate during taxi out phase--></thrust_rate>
         </taxi_out>
+        <cs23>
+          <characteristic_speed>
+            <vd units="knot" is_input="True">182.0<!--limit speed--></vd>
+          </characteristic_speed>
+          <sizing_factor>
+            <ultimate_aircraft is_input="True">5.205<!--ultimate load factor that the aircraft will experience (default value is 5.7)--></ultimate_aircraft>
+          </sizing_factor>
+        </cs23>
         <main_route>
           <climb>
             <v_cas units="knot" is_input="True">182.0</v_cas>
@@ -312,14 +296,6 @@
       </rudder>
     </handling_qualities>
     <materials>
-      <aluminium>
-        <density units="kg/m**3" is_input="True">2780.0<!--Aluminum material density--></density>
-        <max_compression_stress units="Pa" is_input="True">-247000000.0<!--Aluminum maximum compression stress--></max_compression_stress>
-        <max_shear_stress units="Pa" is_input="True">165000000.0<!--Aluminum maximum shear stress--></max_shear_stress>
-        <max_tension_stress units="Pa" is_input="True">330000000.0<!--Aluminum maximum tension stress--></max_tension_stress>
-        <shear_modulus units="Pa" is_input="True">28000000000.0<!--Aluminum shear modulus--></shear_modulus>
-        <surface_density units="kg/m**2" is_input="True">9.6<!--Aluminum surface density--></surface_density>
-      </aluminium>
       <insulation>
         <area_density units="kg/m**2" is_input="True">1.3</area_density>
       </insulation>
@@ -413,21 +389,6 @@
         </tank>
       </propulsion>
     </weight>
-    <wing>
-      <structure>
-        <F_COMP is_input="True">0.0<!--Composite utilisation factor; 1.0 for max composite utilisation, 0.0 for min utilisation--></F_COMP>
-        <secondary_mass_ratio is_input="True">0.25<!--Ratio of the mass of the secondary structure and the primary structure (between 0.25 and 0.30 according to literature--></secondary_mass_ratio>
-      </structure>
-      <airfoil>
-        <flanges>
-          <height_ratio is_input="True">0.93<!--ratio of the height between the two flanges and the the thickness of the airfoil, depends on the airfoil--></height_ratio>
-        </flanges>
-        <skin>
-          <d_wingbox is_input="True">0.33<!--ratio of the wingbox working depth/airfoil chord--></d_wingbox>
-          <ka is_input="True">0.92<!--Correction coefficient needed to account for the hypothesis of a rectangular wingbox--></ka>
-        </skin>
-      </airfoil>
-    </wing>
     <aerodynamics>
       <aircraft>
         <undesirable_drag>

@@ -6,7 +6,7 @@
       <range units="NM" is_input="True">400.0<!--(POH, for 1375kg payload) top-level requirement: design range--></range>
       <v_approach units="kn" is_input="True">75.4<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
       <v_cruise units="kn" is_input="True">182<!--(POH, 10000ft) top-level requirement: cruise speed--></v_cruise>
-      <v_max_sl units="kn" is_input="True">182</v_max_sl>
+      <v_max_sl units="kn" is_input="True">170</v_max_sl>
     </TLAR>
     <geometry>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
@@ -20,7 +20,7 @@
           <width units="m" is_input="True">0.76</width>
         </doors>
         <luggage>
-          <mass_max units="kg" is_input="True">30.0<!--30 before, maximum luggage mass--></mass_max>
+          <mass_max units="kg" is_input="True">357.0<!--30 before, maximum luggage mass--></mass_max>
         </luggage>
         <windows>
           <height units="m" is_input="True">0.30</height>
@@ -178,13 +178,13 @@
       <flaps>
         <landing>
           <CL is_input="True">1.3125<!--(Gudmundsson p.446) lift coefficient increment due to flaps deployment in landing configuration--></CL>
-          <CL_max is_input="True">1.05<!--maximum lift coefficient increment due to flaps deployment in landing configuration--></CL_max>
+          <CL_max is_input="True">0.985<!--maximum lift coefficient increment due to flaps deployment in landing configuration--></CL_max>
           <CM is_input="True">-0.24648012559668536<!--additional pitching moment coefficient ue to the deployment of flaps in landing configuration--></CM>
         </landing>
         <takeoff>
           <CD is_input="True">0.00868<!--(Gudmundsson p.724) additional drag coefficient due to flaps deployment in takeoff configuration--></CD>
           <CL is_input="True">1.3<!--lift coefficient increment due to flaps deployment in takeoff configuration--></CL>
-          <CL_max is_input="True">1.01<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
+          <CL_max is_input="True">0.95<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
           <CM is_input="True">-0.08448449127122522<!--additional pitching moment coefficient due to the deployment of flaps in takeoff configuration--></CM>
         </takeoff>
       </flaps>
@@ -219,7 +219,7 @@
       </airframe>
       <furniture>
         <passenger_seats>
-          <mass units="kg" is_input="True">146.3<!--(Roskam part 3, 7.7 lbs per seat) passenger/pilot seats total mass--></mass>
+          <mass units="kg" is_input="True">178.5<!--(Roskam part 3, 7.7 lbs per seat) passenger/pilot seats total mass--></mass>
         </passenger_seats>
       </furniture>
       <systems>
