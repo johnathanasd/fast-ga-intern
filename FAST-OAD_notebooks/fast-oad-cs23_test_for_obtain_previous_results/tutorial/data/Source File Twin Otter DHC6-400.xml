@@ -151,12 +151,12 @@
           <OPR is_input="True">9<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
           <altitude units="m" is_input="True">0.0<!--(POH) altitude of the turboprop design point--></altitude>
           <mach is_input="True">0.0<!--mach number at the turboprop design point--></mach>
-          <power units="hp" is_input="True">1125.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
-          <turbine_entry_temperature units="degK" is_input="True">1250<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
+          <power units="hp" is_input="True">1150.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
+          <turbine_entry_temperature units="degK" is_input="True">1300<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
         </design_point>
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
-          <itt_limit units="degK" is_input="True">1063<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
+          <itt_limit units="degK" is_input="True">1000<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
           <opr_limit is_input="True">9.5<!--pressure ratio limitation in off-design point--></opr_limit>
           <power_limit units="hp" is_input="True">750.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
         </off_design>
@@ -359,7 +359,7 @@
         <efficiency>
           <combustion units="J/kg" is_input="True">41097000.0<!--fuel energy content--></combustion>
           <first_compressor_stage is_input="True">0.85<!--first compressor stage polytropic efficiency--></first_compressor_stage>
-          <gearbox is_input="True">0.98<!--power shaft mechanical efficiency--></gearbox>
+          <gearbox is_input="True">0.99<!--power shaft mechanical efficiency--></gearbox>
           <high_pressure_axe is_input="True">0.98<!--high pressure axe mechanical efficiency--></high_pressure_axe>
           <high_pressure_turbine is_input="True">0.86<!--high pressure turbine  polytropic efficiency--></high_pressure_turbine>
           <power_turbine is_input="True">0.86<!--power turbine  polytropic efficiency--></power_turbine>
