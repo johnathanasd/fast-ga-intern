@@ -147,8 +147,8 @@
           <OPR is_input="True">9.0<!--(internet) 6.3 before overall pressure ratio at the turboprop design point--></OPR>
           <altitude units="m" is_input="True">0.0<!--(POH) altitude of the turboprop design point--></altitude>
           <mach is_input="True">0.0<!--mach number at the turboprop design point--></mach>
-          <power units="hp" is_input="True">1150.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
-          <turbine_entry_temperature units="degK" is_input="True">1300.0<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
+          <power units="hp" is_input="True">886.0<!--prev 680 (Jane, 578eshp) desired turboprop thermodynamic power at the design point--></power>
+          <turbine_entry_temperature units="degK" is_input="True">1330.0<!--turboprop turbine entry temperature at the design point--></turbine_entry_temperature>
         </design_point>
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
@@ -341,7 +341,7 @@
     </propulsion>
     <weight>
       <aircraft>
-        <MLW_MZFW_ratio is_input="True">1.24<!--(1.16) before--></MLW_MZFW_ratio>
+        <MLW_MZFW_ratio is_input="True">1.124<!--(1.16) before--></MLW_MZFW_ratio>
         <CG>
           <range is_input="True">0.16<!--(0.23) distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
           <aft>
