@@ -133,13 +133,13 @@
         <engine>
           <count is_input="True">2.0<!--number of engine--></count>
           <layout is_input="True">1.0<!--position of engines (1=under the wing / 2=rear fuselage / 3=nose)--></layout>
-          <y_ratio is_input="True">0.29<!--(0.29) engine position along wing span (if layout=1-2)--></y_ratio>
+          <y_ratio is_input="True">0.28<!--(0.29) engine position along wing span (if layout=1-2)--></y_ratio>
         </engine>
         <tank>
-          <LE_chord_percentage is_input="True">0.05<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
-          <TE_chord_percentage is_input="True">0.05<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
-          <y_ratio_tank_beginning is_input="True">0.095<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
-          <y_ratio_tank_end is_input="True">0.99<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
+          <LE_chord_percentage is_input="True">0.005<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
+          <TE_chord_percentage is_input="True">0.01<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
+          <y_ratio_tank_beginning is_input="True">0.1<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
+          <y_ratio_tank_end is_input="True">0.8<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
         </tank>
       </propulsion>
     </geometry>
@@ -359,15 +359,15 @@
         <efficiency>
           <combustion units="J/kg" is_input="True">41097000.0<!--fuel energy content--></combustion>
           <first_compressor_stage is_input="True">0.85<!--first compressor stage polytropic efficiency--></first_compressor_stage>
-          <gearbox is_input="True">0.99<!--power shaft mechanical efficiency--></gearbox>
-          <high_pressure_axe is_input="True">0.98<!--high pressure axe mechanical efficiency--></high_pressure_axe>
+          <gearbox is_input="True">0.9<!--power shaft mechanical efficiency--></gearbox>
+          <high_pressure_axe is_input="True">0.9<!--high pressure axe mechanical efficiency--></high_pressure_axe>
           <high_pressure_turbine is_input="True">0.86<!--high pressure turbine  polytropic efficiency--></high_pressure_turbine>
           <power_turbine is_input="True">0.86<!--power turbine  polytropic efficiency--></power_turbine>
           <second_compressor_stage is_input="True">0.86<!--second compressor stage polytropic efficiency--></second_compressor_stage>
         </efficiency>
         <pressure_loss>
           <combustion_chamber is_input="True">0.95<!--combustion chamber pressure loss--></combustion_chamber>
-          <inlet is_input="True">0.8<!--inlet total pressure loss--></inlet>
+          <inlet is_input="True">0.682<!--inlet total pressure loss--></inlet>
         </pressure_loss>
       </turboprop>
     </propulsion>

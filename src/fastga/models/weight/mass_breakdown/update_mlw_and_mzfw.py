@@ -64,10 +64,9 @@ class UpdateMLWandMZFW(ExplicitComponent):
         mzfw = owe + max_pl
         zfw = owe + pl
 
-        if cruise_ktas > 250.0:
-            mlw = inputs["settings:weight:aircraft:MLW_MZFW_ratio"] * mzfw
-        else:
-            mlw = mtow
+        
+        mlw = inputs["settings:weight:aircraft:MLW_MZFW_ratio"] * mzfw
+        
 
         outputs["data:weight:aircraft:MZFW"] = mzfw
         outputs["data:weight:aircraft:ZFW"] = zfw
@@ -81,37 +80,21 @@ class UpdateMLWandMZFW(ExplicitComponent):
 
         mzfw = owe + max_pl
 
-        if cruise_ktas > 250.0:
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:MTOW",
-            ] = 0.0
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:OWE",
-            ] = inputs["settings:weight:aircraft:MLW_MZFW_ratio"]
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:max_payload",
-            ] = inputs["settings:weight:aircraft:MLW_MZFW_ratio"]
-            partials[
-                "data:weight:aircraft:MLW",
-                "settings:weight:aircraft:MLW_MZFW_ratio",
-            ] = mzfw
-        else:
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:MTOW",
-            ] = 1.0
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:OWE",
-            ] = 0.0
-            partials[
-                "data:weight:aircraft:MLW",
-                "data:weight:aircraft:max_payload",
-            ] = 0.0
-            partials[
-                "data:weight:aircraft:MLW",
-                "settings:weight:aircraft:MLW_MZFW_ratio",
-            ] = 0.0
+        
+        partials[
+            "data:weight:aircraft:MLW",
+            "data:weight:aircraft:MTOW",
+        ] = 0.0
+        partials[
+            "data:weight:aircraft:MLW",
+            "data:weight:aircraft:OWE",
+        ] = inputs["settings:weight:aircraft:MLW_MZFW_ratio"]
+        partials[
+            "data:weight:aircraft:MLW",
+            "data:weight:aircraft:max_payload",
+        ] = inputs["settings:weight:aircraft:MLW_MZFW_ratio"]
+        partials[
+            "data:weight:aircraft:MLW",
+            "settings:weight:aircraft:MLW_MZFW_ratio",
+        ] = mzfw
+       
