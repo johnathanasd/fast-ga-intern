@@ -4,7 +4,7 @@
       <NPAX_design is_input="True">19.0<!--(POH) top-level requirement: number of passengers for the design mission, assuming a classic eco/business class repartition--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">8.00<!--(for 19pax and 1375kg payload) top-level requirement: luggage mass per passenger for the design mission--></luggage_mass_design>
       <range units="NM" is_input="True">400.0<!--(POH, for 1375kg payload) top-level requirement: design range--></range>
-      <v_approach units="kn" is_input="True">75.4<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
+      <v_approach units="kn" is_input="True">75.9<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
       <v_cruise units="kn" is_input="True">182<!--(POH, 10000ft) top-level requirement: cruise speed--></v_cruise>
       <v_max_sl units="kn" is_input="True">170</v_max_sl>
     </TLAR>
@@ -136,10 +136,10 @@
           <y_ratio is_input="True">0.28<!--(0.29) engine position along wing span (if layout=1-2)--></y_ratio>
         </engine>
         <tank>
-          <LE_chord_percentage is_input="True">0.005<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
-          <TE_chord_percentage is_input="True">0.01<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
-          <y_ratio_tank_beginning is_input="True">0.1<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
-          <y_ratio_tank_end is_input="True">0.8<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
+          <LE_chord_percentage is_input="True">0.05<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
+          <TE_chord_percentage is_input="True">0.03<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
+          <y_ratio_tank_beginning is_input="True">0.11<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
+          <y_ratio_tank_end is_input="True">0.9<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
         </tank>
       </propulsion>
     </geometry>
@@ -157,7 +157,7 @@
         <off_design>
           <bleed_usage is_input="True">1.0<!--usage of the bleed in off-design point, 0 for "low" or 1 for "high"--></bleed_usage>
           <itt_limit units="degK" is_input="True">1000<!--(TC PT6A-41 1023) inter turbine temperature limitation in off-design point--></itt_limit>
-          <opr_limit is_input="True">9.5<!--pressure ratio limitation in off-design point--></opr_limit>
+          <opr_limit is_input="True">9.2<!--pressure ratio limitation in off-design point--></opr_limit>
           <power_limit units="hp" is_input="True">750.0<!--(TC PT6A-41) mechanical power limitation in off-design point--></power_limit>
         </off_design>
       </turboprop>
