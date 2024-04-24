@@ -9,7 +9,7 @@ input_file: ../results/oad_process_inputs.xml
 output_file: ../results/oad_process_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
-driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='COBYLA')
+driver: om.ScipyOptimizeDriver(tol=1e-2, optimizer='COBYLA')
 
 model:
     propeller:
@@ -79,4 +79,5 @@ submodels:
     submodel.geometry.vertical_tail.position.fd: null
     submodel.performances.mission.descent_speed: null
     submodel.performances.mission.climb_speed: null
+    submodel.aerodynamics.wing.extreme_lift_coefficient.clean: null
 

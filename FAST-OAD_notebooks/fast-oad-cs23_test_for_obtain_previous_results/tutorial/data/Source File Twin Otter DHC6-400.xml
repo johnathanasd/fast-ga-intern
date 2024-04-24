@@ -4,7 +4,7 @@
       <NPAX_design is_input="True">19.0<!--(POH) top-level requirement: number of passengers for the design mission, assuming a classic eco/business class repartition--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">8.00<!--(for 19pax and 1375kg payload) top-level requirement: luggage mass per passenger for the design mission--></luggage_mass_design>
       <range units="NM" is_input="True">400.0<!--(POH, for 1375kg payload) top-level requirement: design range--></range>
-      <v_approach units="kn" is_input="True">75.9<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
+      <v_approach units="kn" is_input="True">75.4<!--(Jane, 1.3x63mph stall speed) top-level requirement: approach speed--></v_approach>
       <v_cruise units="kn" is_input="True">182<!--(POH, 10000ft) top-level requirement: cruise speed--></v_cruise>
       <v_max_sl units="kn" is_input="True">170</v_max_sl>
     </TLAR>
@@ -40,7 +40,7 @@
       </cabin>
       <flap>
         <chord_ratio is_input="True">0.23<!--mean value of (flap chord)/(section chord)--></chord_ratio>
-        <span_ratio is_input="True">0.355<!--flap span as a percentage of the wing span--></span_ratio>
+        <span_ratio is_input="True">0.865<!--flap span as a percentage of the wing span--></span_ratio>
       </flap>
       <fuselage>
         <PAX_length units="m" is_input="True">3.79<!--(5.64 before) length of the passenger compartment--></PAX_length>
@@ -137,9 +137,9 @@
         </engine>
         <tank>
           <LE_chord_percentage is_input="True">0.05<!--0.05 distance between the leading edge and the start of the wing tank as a percentage of the wing chord--></LE_chord_percentage>
-          <TE_chord_percentage is_input="True">0.03<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
-          <y_ratio_tank_beginning is_input="True">0.11<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
-          <y_ratio_tank_end is_input="True">0.9<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
+          <TE_chord_percentage is_input="True">0.05<!--0.05 distance between the trailing edge device and the start of the wing tank as a percentage of the wing chord--></TE_chord_percentage>
+          <y_ratio_tank_beginning is_input="True">0.09<!--0.11 start of the tank as a percentage of the wing span--></y_ratio_tank_beginning>
+          <y_ratio_tank_end is_input="True">0.99<!--0.99 0.9 end of the tank as a percentage of the wing span--></y_ratio_tank_end>
         </tank>
       </propulsion>
     </geometry>
@@ -163,6 +163,12 @@
       </turboprop>
     </propulsion>
     <aerodynamics>
+      <wing>
+        <low_speed>
+          <CL_max_clean is_input="False">1.55<!--wing maximum lift coefficient for positive angle of attack--></CL_max_clean>
+          <CL_min_clean is_input="False">-1.30<!--wing maximum lift coefficient for negative angle of attack--></CL_min_clean>
+        </low_speed>
+      </wing>
       <propeller>
         <mach is_input="True">0.0<!--0.285 before, mach number used to compute the polar of the airfoil used in the propeller computation--></mach>
         <reynolds is_input="True">1000000.0<!--reynolds number used to compute the polar of the airfoil used in the propeller computation--></reynolds>
@@ -184,7 +190,7 @@
         <takeoff>
           <CD is_input="True">0.00868<!--(Gudmundsson p.724) additional drag coefficient due to flaps deployment in takeoff configuration--></CD>
           <CL is_input="True">1.3<!--lift coefficient increment due to flaps deployment in takeoff configuration--></CL>
-          <CL_max is_input="True">0.95<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
+          <CL_max is_input="True">0.93<!--maximum lift coefficient increment due to flaps deployment in takeoff configuration--></CL_max>
           <CM is_input="True">-0.08448449127122522<!--additional pitching moment coefficient due to the deployment of flaps in takeoff configuration--></CM>
         </takeoff>
       </flaps>
@@ -196,7 +202,7 @@
     </handling_qualities>
     <weight>
       <aircraft>
-        <max_payload is_input="True" units="kg">1842.0<!--(Jane) max payload weight--></max_payload>
+        <max_payload is_input="True" units="kg">1941.0<!--(Jane) max payload weight--></max_payload>
         <payload is_input="True" units="kg">1375.0<!--(POH) design payload weight--></payload>
       </aircraft>
       <airframe>
@@ -250,7 +256,7 @@
           </sizing_factor>
         </cs23>
         <landing>
-          <elevator_angle units="deg" is_input="True">-30.0<!--elevator maximum angle during landing phase in sizing mission--></elevator_angle>
+          <elevator_angle units="deg" is_input="True">-25.0<!--elevator maximum angle during landing phase in sizing mission--></elevator_angle>
           <flap_angle units="deg">37.5</flap_angle>
           <target_sideslip units="deg" is_input="True">15.0</target_sideslip>
         </landing>
@@ -259,7 +265,7 @@
         </initial_climb>
         <takeoff>
           <energy units="W*h" is_input="False">0.0</energy>
-          <elevator_angle units="deg" is_input="True">-30.0<!--elevator maximum angle during takeoff phase in sizing mission--></elevator_angle>
+          <elevator_angle units="deg" is_input="True">-25.0<!--elevator maximum angle during takeoff phase in sizing mission--></elevator_angle>
           <friction_coefficient_no_brake is_input="True">0.03<!--friction coefficient used during the computation of the takeoff phase--></friction_coefficient_no_brake>
           <thrust_rate is_input="True">1.0<!--thrust rate during takeoff phase--></thrust_rate>
         </takeoff>
@@ -347,6 +353,7 @@
     </materials>
     <propulsion>
       <turboprop>
+        <k_factor_sfc>1.469</k_factor_sfc>
         <electric_power_offtake units="kW" is_input="True">10.0<!--power used for electrical generation obtained from the HP shaft--></electric_power_offtake>
         <bleed>
           <inter_compressor is_input="True">0.04<!--total compressor airflow extracted after the first  compression stage (in station 25)--></inter_compressor>
@@ -367,23 +374,23 @@
         </efficiency>
         <pressure_loss>
           <combustion_chamber is_input="True">0.95<!--combustion chamber pressure loss--></combustion_chamber>
-          <inlet is_input="True">0.682<!--inlet total pressure loss--></inlet>
+          <inlet is_input="True">0.8<!--inlet total pressure loss--></inlet>
         </pressure_loss>
       </turboprop>
     </propulsion>
     <weight>
       <aircraft>
-        <MLW_MZFW_ratio is_input="True">1.124<!--(1.16) before--></MLW_MZFW_ratio>
+        <MLW_MZFW_ratio is_input="True">1.1<!--(1.16) before--></MLW_MZFW_ratio>
         <CG>
           <range is_input="True">0.16<!--(0.23) distance between front position and aft position of CG, as ratio of mean aerodynamic chord (allows to have front position of CG, as currently, FAST-OAD estimates only the aft position of CG)--></range>
           <aft>
             <MAC_position>
-              <margin is_input="True">0.36<!--(0.0) Added margin for getting most aft CG position, as ratio of mean aerodynamic chord--></margin>
+              <margin is_input="True">0.01<!--(0.0) Added margin for getting most aft CG position, as ratio of mean aerodynamic chord--></margin>
             </MAC_position>
           </aft>
           <fwd>
             <MAC_position>
-              <margin is_input="True">0.20<!--(0.0) Added margin for getting most fwd CG position, as ratio of mean aerodynamic chord--></margin>
+              <margin is_input="True">0.02<!--(0.0) Added margin for getting most fwd CG position, as ratio of mean aerodynamic chord--></margin>
             </MAC_position>
           </fwd>
         </CG>

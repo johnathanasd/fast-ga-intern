@@ -106,6 +106,7 @@ class BasicTPEngineMapped(AbstractFuelPropulsion):
         inter_compressor_bleed=0.04,
         exhaust_mach_design=0.4,
         pr_1_ratio_design=0.25,
+        k_sfc=1.0,
     ):
         """
         Parametric turboprop engine reading a map computed beforehand. Based on the basic turboprop
@@ -203,6 +204,7 @@ class BasicTPEngineMapped(AbstractFuelPropulsion):
             exhaust_mach_design=exhaust_mach_design,
             pr_1_ratio_design=pr_1_ratio_design,
         )
+        self.k_sfc = k_sfc
 
         self.speed_SL = speed_SL
         self.thrust_SL = thrust_SL
@@ -581,7 +583,7 @@ class BasicTPEngineMapped(AbstractFuelPropulsion):
                 local_atmosphere.mach = atmosphere.mach[idx]
                 sfc[idx] = self.read_sfc_table(thrust[idx], local_atmosphere)
 
-        return sfc
+        return sfc * self.k_sfc
 
     def max_thrust(
         self,

@@ -221,6 +221,12 @@ class OMBasicTurbopropMapWrapper(oad.IOMPropulsionWrapper):
             shape=(MACH_PTS_NB_TURBOPROP, THRUST_PTS_NB_TURBOPROP),
             units="kg/s/N",
         )
+        component.add_input(
+            "settings:propulsion:turboprop:k_factor_sfc",
+            1.0,
+            desc="k_factor that can be used to adjust the consumption on engine level to the "
+            "aircraft level",
+        )
         # TODO: add effective efficiency
 
     @staticmethod
@@ -297,6 +303,7 @@ class OMBasicTurbopropMapWrapper(oad.IOMPropulsionWrapper):
             "pr_1_ratio_design": inputs[
                 "settings:propulsion:turboprop:design_point:first_stage_pressure_ratio"
             ],
+            "k_sfc": inputs["settings:propulsion:turboprop:k_factor_sfc"]
         }
 
         return FuelEngineSet(
