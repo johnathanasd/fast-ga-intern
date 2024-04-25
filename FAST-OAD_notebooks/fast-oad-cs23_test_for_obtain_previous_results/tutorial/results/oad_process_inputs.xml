@@ -52,14 +52,14 @@
       </fuselage>
       <horizontal_tail>
         <aspect_ratio is_input="True">4.35<!--horizontal tail aspect ratio--></aspect_ratio>
-        <elevator_chord_ratio is_input="True">0.4<!--(0.8) elevator chord ratio--></elevator_chord_ratio>
+        <elevator_chord_ratio is_input="True">0.5<!--(0.8) elevator chord ratio--></elevator_chord_ratio>
         <sweep_25 units="deg" is_input="True">0.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
         <taper_ratio is_input="True">1.0<!--taper ratio of horizontal tail--></taper_ratio>
-        <thickness_ratio is_input="True">0.15<!--thickness ratio of horizontal tail--></thickness_ratio>
+        <thickness_ratio is_input="True">0.12<!--thickness ratio of horizontal tail--></thickness_ratio>
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.164<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">7.45<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
@@ -94,7 +94,7 @@
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.49<!--(7.31, 6.01) distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">7.21<!--(7.31, 6.01) distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
@@ -357,7 +357,7 @@
           </aft>
           <fwd>
             <MAC_position>
-              <margin is_input="True">0.02<!--(0.0) Added margin for getting most fwd CG position, as ratio of mean aerodynamic chord--></margin>
+              <margin is_input="True">0.01<!--(0.0) Added margin for getting most fwd CG position, as ratio of mean aerodynamic chord--></margin>
             </MAC_position>
           </fwd>
         </CG>
