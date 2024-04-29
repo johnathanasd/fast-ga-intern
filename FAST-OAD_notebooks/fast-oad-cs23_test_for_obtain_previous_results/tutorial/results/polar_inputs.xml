@@ -1,0 +1,141 @@
+<FASTOAD_model>
+  <data>
+    <TLAR>
+      <v_approach units="knot" is_input="True">75.4<!--approach speed--></v_approach>
+      <v_cruise units="knot" is_input="True">182.0<!--cruise speed--></v_cruise>
+    </TLAR>
+    <aerodynamics>
+      <cruise>
+        <mach is_input="True">0.2851163924282996<!--mach number representative of high speed aerodynamics--></mach>
+      </cruise>
+      <fuselage>
+        <cm_alpha units="1/rad" is_input="True">-0.2817645791887173<!--derivative of fuselage pitching moment coefficient with respect to angle of attack--></cm_alpha>
+      </fuselage>
+      <low_speed>
+        <mach is_input="True">0.11398663222460018<!--mach number representative of low speed aerodynamics--></mach>
+      </low_speed>
+      <aircraft>
+        <cruise>
+          <CD0 is_input="True">0.021343871297868473<!--profile drag coefficient for the complete aircraft in cruise conditions--></CD0>
+        </cruise>
+        <low_speed>
+          <CD0 is_input="True">0.023309245563270558<!--profile drag coefficient for the complete aircraft in low speed conditions--></CD0>
+        </low_speed>
+      </aircraft>
+      <elevator>
+        <low_speed>
+          <CD_delta units="1/rad**2" is_input="True">0.07097468007291928<!--derivative of horizontal tail drag coefficient with respect to elevator command--></CD_delta>
+          <CL_delta units="1/rad" is_input="True">0.719114478900195<!--derivative of horizontal tail lift coefficient with respect to elevator command--></CL_delta>
+        </low_speed>
+      </elevator>
+      <horizontal_tail>
+        <cruise>
+          <CL0 is_input="True">-0.0012726158247008427<!--lift coefficient of the horizontal tail when aircraft AOA is null in cruise conditions--></CL0>
+          <CL_alpha units="1/rad" is_input="True">0.7734877905129158<!--derivative of lift coefficient of horizontal tail with respect to aircraft angle of attack in cruise conditions--></CL_alpha>
+          <CL_alpha_isolated units="1/rad" is_input="True">1.0503771698203956<!--derivative of lift coefficient of horizontal tail with respect to local angle of attack in cruise conditions--></CL_alpha_isolated>
+          <induced_drag_coefficient is_input="True">0.16798316301773578<!--coefficient to multiply by the lift coefficient squared to get induced drag in cruise conditions--></induced_drag_coefficient>
+        </cruise>
+        <low_speed>
+          <CL0 is_input="True">-0.00125352658733033<!--lift coefficient of the horizontal tail when aircraft AOA is null in low speed conditions--></CL0>
+          <CL_alpha units="1/rad" is_input="True">0.7628056674633172<!--derivative of lift coefficient of horizontal tail with respect to aircraft angle of attack in low speed conditions--></CL_alpha>
+          <CL_alpha_isolated units="1/rad" is_input="True">1.0269421230754059<!--derivative of lift coefficient of horizontal tail with respect to local angle of attack in low speed conditions--></CL_alpha_isolated>
+          <CL_max_clean is_input="True">0.32676683818496566<!--maximum horizontal tail lift coefficient in low speed altitude--></CL_max_clean>
+          <CL_min_clean is_input="True">-0.32642284332889554<!--minimum horizontal tail lift coefficient in low speed altitude--></CL_min_clean>
+          <induced_drag_coefficient is_input="True">0.1670880673199627<!--coefficient to multiply by the lift coefficient squared to get induced drag in low speed conditions--></induced_drag_coefficient>
+        </low_speed>
+      </horizontal_tail>
+      <wing>
+        <cruise>
+          <CL0_clean is_input="True">-0.06639786128698351<!--wing lift coefficient at zero aircraft angle of attack in cruise conditions and with no flaps deployed--></CL0_clean>
+          <CL_alpha units="1/rad" is_input="True">4.917666525489782<!--wing lift coefficient slope with respect to aircraft angle of attack in cruise conditions--></CL_alpha>
+          <CM0_clean is_input="True">-0.0007828042896591164<!--wing pitching moment coefficient in cruise conditions and with no flaps deployed--></CM0_clean>
+          <induced_drag_coefficient is_input="True">0.03778927174868097<!--coefficient to multiply by the lift coefficient squared to get wing induced drag in cruise conditions--></induced_drag_coefficient>
+        </cruise>
+        <low_speed>
+          <CL0_clean is_input="True">-0.06467167746876085<!--wing lift coefficient at zero aircraft angle of attack in low speed conditions and with no flaps deployed--></CL0_clean>
+          <CL_alpha units="1/rad" is_input="True">4.782652365368994<!--wing lift coefficient slope with respect to aircraft angle of attack in low speed conditions--></CL_alpha>
+          <CL_max_clean is_input="True">1.55<!--wing maximum lift coefficient for positive angle of attack--></CL_max_clean>
+          <CM0_clean is_input="True">-0.0007627323847960621<!--wing pitching moment coefficient in low speed conditions and with no flaps deployed--></CM0_clean>
+          <induced_drag_coefficient is_input="True">0.03777863383550067<!--coefficient to multiply by the lift coefficient squared to get wing induced drag in low speed conditions--></induced_drag_coefficient>
+        </low_speed>
+      </wing>
+    </aerodynamics>
+    <geometry>
+      <fuselage>
+        <length units="m" is_input="True">14.5<!--total length of the fuselage--></length>
+        <maximum_width units="m" is_input="True">1.865<!--maximum width of the fuselage--></maximum_width>
+      </fuselage>
+      <wing>
+        <area units="m**2" is_input="True">39.04944551788281<!--wing area--></area>
+        <MAC>
+          <length units="m" is_input="True">1.9702610472301014<!--length of mean aerodynamic chord of wing--></length>
+          <at25percent>
+            <x units="m" is_input="True">6.200098826279856<!--X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)--></x>
+          </at25percent>
+          <leading_edge>
+            <x>
+              <local units="m" is_input="True">0.0<!--X-position of leading edge of mean aerodynamic chord w.r.t. leading edge of root chord--></local>
+            </x>
+          </leading_edge>
+        </MAC>
+        <root>
+          <virtual_chord units="m" is_input="True">1.970261047230101<!--virtual chord length at wing root if sweep angle of trailing edge of outer wing part was on the whole wing (no kink)--></virtual_chord>
+        </root>
+      </wing>
+      <horizontal_tail>
+        <MAC>
+          <at25percent>
+            <x>
+              <from_wingMAC25 units="m" is_input="True">7.63<!--distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+            </x>
+          </at25percent>
+        </MAC>
+      </horizontal_tail>
+    </geometry>
+    <weight>
+      <aircraft>
+        <MTOW units="kg" is_input="True">5604.158875475638<!--maximum takeoff weight of the aircraft--></MTOW>
+        <CG>
+          <aft>
+            <x units="m" is_input="True">7.146632737818499<!--most aft X-position of aircraft center of gravity--></x>
+          </aft>
+          <fwd>
+            <x units="m" is_input="True">6.169847111135993<!--most fwd X-position of center of gravity--></x>
+          </fwd>
+        </CG>
+        <in_flight_variation>
+          <fixed_mass_comp>
+            <equivalent_moment units="kg*m" is_input="True">29869.638677106464</equivalent_moment>
+            <mass units="kg" is_input="True">4302.5494816888095</mass>
+          </fixed_mass_comp>
+        </in_flight_variation>
+      </aircraft>
+      <aircraft_empty>
+        <CG>
+          <z units="m" is_input="True">1.6563846158967808<!--Z-position center of gravity of empty aircraft--></z>
+        </CG>
+      </aircraft_empty>
+      <propulsion>
+        <engine>
+          <CG>
+            <z units="m" is_input="True">1.525<!--Z-position of center of gravity of the engine(s)--></z>
+          </CG>
+        </engine>
+        <tank>
+          <CG>
+            <x units="m" is_input="True">6.257796030323983<!--X-position of center of gravity of the tank--></x>
+          </CG>
+        </tank>
+      </propulsion>
+    </weight>
+    <mission>
+      <sizing>
+        <main_route>
+          <cruise>
+            <altitude units="ft" is_input="True">10000.0<!--main route cruise phase altitude--></altitude>
+          </cruise>
+        </main_route>
+      </sizing>
+    </mission>
+  </data>
+</FASTOAD_model>

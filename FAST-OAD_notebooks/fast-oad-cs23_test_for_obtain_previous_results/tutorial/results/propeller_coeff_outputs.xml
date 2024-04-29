@@ -1,0 +1,31 @@
+<FASTOAD_model>
+  <data>
+    <geometry>
+      <propeller>
+        <average_rpm is_input="True">2000.0<!--average rotation speed of the propeller--></average_rpm>
+        <blades_number is_input="True">3.0<!--number of blades on the propeller--></blades_number>
+        <chord_vect units="m" is_input="True">[0.1, 0.1, 0.17, 0.23, 0.26, 0.275, 0.28, 0.265, 0.22, 0.158]<!--blade chord at the station along the radius stored in radius_ratio_vect--></chord_vect>
+        <diameter units="m" is_input="True">2.59<!--propeller diameter--></diameter>
+        <hub_diameter units="m" is_input="True">0.71<!--propeller hub diameter--></hub_diameter>
+        <radius_ratio_vect is_input="True">[0.01, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]<!--blade station at which blade geometric properties are sampled, as a percent of blade radius--></radius_ratio_vect>
+        <sweep_vect units="deg" is_input="True">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.2, 3.4, 5.0]<!--blade sweep at the station along the radius stored in radius_ratio_vect--></sweep_vect>
+        <twist_vect units="deg" is_input="True">[20.0, 20.0, 15.5, 10.0, 5.0, 1.0, -2.0, -4.0, -5.0, -5.5]<!--blade twist at the station along the radius stored in radius_ratio_vect--></twist_vect>
+      </propeller>
+    </geometry>
+    <aerodynamics>
+      <propeller>
+        <coefficient_map>
+          <advance_ratio is_input="False">[0.05791505791505792, 0.0953694448142724, 0.13282383171348688, 0.1702782186127014, 0.20773260551191586, 0.24518699241113034, 0.2826413793103449, 0.3200957662095593, 0.3575501531087738, 0.39500454000798835, 0.4324589269072028, 0.4699133138064173, 0.5073677007056318, 0.5448220876048463, 0.5822764745040607, 0.6197308614032753, 0.6571852483024897, 0.6946396352017042, 0.7320940221009188, 0.7695484090001332, 0.8070027958993476, 0.8444571827985623, 0.8819115696977767, 0.919365956596991, 0.9568203434962057, 0.9942747303954201, 1.0317291172946348, 1.069183504193849, 1.1066378910930634, 1.1440922779922782]</advance_ratio>
+          <altitude units="m" is_input="True">0.0</altitude>
+          <mach is_input="True">0.0</mach>
+          <max_speed units="m/s" is_input="True">98.7733</max_speed>
+          <min_speed units="m/s" is_input="True">5.0</min_speed>
+          <power_coefficient is_input="False">[0.14134680214030867, 0.147097788925964, 0.15270125342300098, 0.15794433809806457, 0.1627035584584686, 0.16701560402141566, 0.17083594894893556, 0.17412273518607835, 0.17684827541145026, 0.17896154113945786, 0.1804740195202642, 0.18141770323158893, 0.1818516823843409, 0.18186027354392423, 0.18141110620323173, 0.18025843995383456, 0.17824020988663508, 0.17545079866991112, 0.17192063671942073, 0.16772279806982682, 0.16276356155010543, 0.1573360158847751, 0.151432056226833, 0.14467308688687308, 0.13688906853576036, 0.1280667092467799, 0.1183023248630797, 0.1076086186363672, 0.09596000258853832, 0.0833356515090543]</power_coefficient>
+          <reynolds is_input="True">1000000.0</reynolds>
+          <thrust_coefficient is_input="False">[0.21579118463158384, 0.21820528218935548, 0.22016379290841193, 0.22137879499851554, 0.2217163423489627, 0.2213065691742772, 0.22018472245106283, 0.21838971264827897, 0.21596278164955532, 0.21289532177556625, 0.20924253802413645, 0.20510802425009234, 0.20062553304198555, 0.19596534499985746, 0.19111069875376394, 0.18566731618209475, 0.17947369984432363, 0.1727321021670481, 0.16553965928055622, 0.1579689593283816, 0.1499682063706434, 0.1417384543566522, 0.133179611473842, 0.12416033795859631, 0.11466115770898729, 0.1047125116889373, 0.09433015786882695, 0.08352369679819006, 0.07228745754890387, 0.060615912262660596]</thrust_coefficient>
+          <twist_75 units="deg" is_input="True">25.0</twist_75>
+        </coefficient_map>
+      </propeller>
+    </aerodynamics>
+  </data>
+</FASTOAD_model>

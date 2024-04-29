@@ -1,0 +1,28 @@
+<FASTOAD_model>
+  <data>
+    <geometry>
+      <propeller>
+        <average_rpm is_input="True">2000.0<!--average rotation speed of the propeller--></average_rpm>
+        <blades_number is_input="True">3.0<!--number of blades on the propeller--></blades_number>
+        <chord_vect units="m" is_input="True">[0.1, 0.1, 0.17, 0.23, 0.26, 0.275, 0.28, 0.265, 0.22, 0.158]<!--propeller chord defined at radius ratio points--></chord_vect>
+        <diameter units="m" is_input="True">2.59<!--propeller diameter--></diameter>
+        <hub_diameter units="m" is_input="True">0.71<!--propeller hub diameter--></hub_diameter>
+        <radius_ratio_vect is_input="True">[0.01, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]<!--propeller radius ratio points--></radius_ratio_vect>
+        <sweep_vect units="deg" is_input="True">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.2, 3.4, 5.0]<!--propeller sweep angle defined at radius ratio points--></sweep_vect>
+        <twist_vect units="deg" is_input="True">[20.0, 20.0, 15.5, 10.0, 5.0, 1.0, -2.0, -4.0, -5.0, -5.5]<!--propeller twist angle defined at radius ratio points--></twist_vect>
+      </propeller>
+    </geometry>
+    <aerodynamics>
+      <propeller>
+        <coefficient_map>
+          <altitude units="m" is_input="True">0.0</altitude>
+          <mach is_input="True">0.0</mach>
+          <max_speed units="m/s" is_input="True">98.7733</max_speed>
+          <min_speed units="m/s" is_input="True">5.0</min_speed>
+          <reynolds is_input="True">1000000.0</reynolds>
+          <twist_75 units="deg" is_input="True">25.0</twist_75>
+        </coefficient_map>
+      </propeller>
+    </aerodynamics>
+  </data>
+</FASTOAD_model>

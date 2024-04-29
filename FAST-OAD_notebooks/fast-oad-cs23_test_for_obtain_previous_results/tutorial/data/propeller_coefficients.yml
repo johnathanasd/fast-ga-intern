@@ -5,8 +5,8 @@ module_folders:
 
 
 # Input and output files
-input_file: ./propeller_coeff_inputs.xml
-output_file: ./propeller_coeff_outputs.xml
+input_file: ../results/propeller_coeff_inputs.xml
+output_file: ../results/propeller_coeff_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
 driver: om.ScipyOptimizeDriver(tol=1e-2, optimizer='COBYLA')
