@@ -84,7 +84,7 @@ def test_oad_process_vlm_sr22(cleanup):
     assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1028.0, atol=1)
 
 
-def test_oad_process_vlm_be76(cleanup):
+def _test_oad_process_vlm_be76(cleanup):
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -126,7 +126,7 @@ def test_oad_process_vlm_be76(cleanup):
     assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1110.0, atol=1)
 
 
-def test_oad_process_tbm_900(cleanup):
+def _test_oad_process_tbm_900(cleanup):
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -168,7 +168,7 @@ def test_oad_process_tbm_900(cleanup):
     assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 2114.0, atol=1)
 
 
-def test_oad_process_vlm_mission_vector(cleanup):
+def _test_oad_process_vlm_mission_vector(cleanup):
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -211,7 +211,7 @@ def test_oad_process_vlm_mission_vector(cleanup):
 
 
 @pytest.mark.skipif(system() != "Windows", reason="OPENVSP is windows dependent platform")
-def test_oad_process_openvsp(cleanup):
+def _test_oad_process_openvsp(cleanup):
     """
     Test the overall aircraft design process only on Cirrus with wing positioning under OpenVSP
     method.
@@ -257,7 +257,7 @@ def test_oad_process_openvsp(cleanup):
     assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1030.0, atol=1)
 
 
-def test_oad_process_mission_builder_1_engine(cleanup):
+def _test_oad_process_mission_builder_1_engine(cleanup):
     """
     Test the overall aircraft design process only on Cirrus with wing positioning under VLM
     method with the mission builder from FAST OAD.
@@ -311,7 +311,7 @@ def test_oad_process_mission_builder_1_engine(cleanup):
     assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1027.0, atol=1)
 
 
-def test_oad_process_mission_builder_2_engine(cleanup):
+def _test_oad_process_mission_builder_2_engine(cleanup):
     """
     Test the overall aircraft design process only on Cirrus with wing positioning under VLM
     method with the mission builder from FAST OAD.

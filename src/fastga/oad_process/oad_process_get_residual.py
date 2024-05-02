@@ -18,11 +18,10 @@ import logging
 import shutil
 from shutil import rmtree
 from platform import system
-
+import numpy as np
 import openmdao.api as om
-import pytest
+import csv
 from numpy.testing import assert_allclose
-
 import fastoad.api as oad
 from fastga.models.performances.mission import resources
 
@@ -35,14 +34,35 @@ for folder in PATH[1 : len(PATH) - 3]:
 NOTEBOOKS_PATH = pth.join(NOTEBOOKS_PATH, "notebooks")
 
 
-@pytest.fixture(scope="module")
+
 def cleanup():
     """Empties results folder to avoid any conflicts."""
     rmtree(RESULTS_FOLDER_PATH, ignore_errors=True)
     rmtree("D:/tmp", ignore_errors=True)
 
 
-def test_oad_process_vlm_sr22(cleanup):
+def residuals_analyzer(recorder_path):
+    # Does not bring much info since the bloody reluctance is so high ...
+
+    cr = om.CaseReader(recorder_path)
+
+    solver_case = cr.get_cases("root.nonlinear_solver")
+    variable_dict = {name: 0.0 for name in solver_case[-1].residuals}
+    for case in solver_case:
+        for residual in case.residuals:
+            # Because those are matrix and I don't want to deal with it
+            #if "aerodynamics:propeller" not in residual:
+            variable_dict[residual] = variable_dict[residual] + np.sum(np.abs(case.residuals[residual]))
+    sorted_variable_dict = dict(sorted(variable_dict.items(), key=lambda x: x[1], reverse=True))
+
+    return sorted_variable_dict
+
+                
+
+      
+
+def oad_process_vlm_sr22():
+    cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -53,7 +73,8 @@ def test_oad_process_vlm_sr22(cleanup):
     process_file_name = "oad_process_sr22.yml"
 
     configurator = oad.FASTOADProblemConfigurator(pth.join(DATA_FOLDER_PATH, process_file_name))
-
+    if not pth.exists(RESULTS_FOLDER_PATH):
+        os.mkdir(RESULTS_FOLDER_PATH)
     # Create inputs
     ref_inputs = pth.join(DATA_FOLDER_PATH, xml_file_name)
 
@@ -61,30 +82,43 @@ def test_oad_process_vlm_sr22(cleanup):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
+    
+    # Removing previous case and adding a recorder
+    recorder_path = pth.join(RESULTS_FOLDER_PATH, "sr22_cases.sql")
+
+
+    recorder = om.SqliteRecorder(recorder_path)
+    solver = problem.model.nonlinear_solver
+    solver.add_recorder(recorder)
+    solver.recording_options["record_solver_residuals"] = True
+
     problem.setup()
     problem.run_model()
     problem.write_outputs()
+    sorted_variable_residuals = residuals_analyzer(recorder_path)
+   
 
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
+    # Create the folder if it doesn't exist
+    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
+    # Construct the file path
+    file_path = os.path.join(RESULTS_FOLDER_PATH, 'sr22_residuals_analysis.csv')
 
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 252.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.15, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1656.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1028.0, atol=1)
+    # Open the file for writing
+    with open(file_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
 
+        # Write the header
+        writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-def test_oad_process_vlm_be76(cleanup):
+        # Write the sum of residuals for each iteration
+        for name, sum_res in sorted_variable_residuals.items():
+            writer.writerow([name, sum_res])
+
+    
+
+def oad_process_vlm_be76():
+    cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -103,30 +137,42 @@ def test_oad_process_vlm_be76(cleanup):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
+    # Removing previous case and adding a recorder
+    recorder_path = pth.join(RESULTS_FOLDER_PATH, "be76_cases.sql")
+    recorder = om.SqliteRecorder(recorder_path)
+    solver = problem.model.nonlinear_solver
+    solver.add_recorder(recorder)
+    solver.recording_options["record_solver_residuals"] = True
+
     problem.setup()
     problem.run_model()
     problem.write_outputs()
 
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
+    sorted_variable_residuals = residuals_analyzer(recorder_path)
+   
 
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
+    # Create the folder if it doesn't exist
+    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 258.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.25, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1748.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1110.0, atol=1)
+    # Construct the file path
+    file_path = os.path.join(RESULTS_FOLDER_PATH, 'be76_residuals_analysis.csv')
+
+    # Open the file for writing
+    with open(file_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+
+        # Write the header
+        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+
+        # Write the sum of residuals for each iteration
+        for name, sum_res in sorted_variable_residuals.items():
+            writer.writerow([name, sum_res])
 
 
-def test_oad_process_tbm_900(cleanup):
+
+
+def oad_process_tbm_900():
+    cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
@@ -145,244 +191,96 @@ def test_oad_process_tbm_900(cleanup):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
+    # Removing previous case and adding a recorder
+    recorder_path = pth.join(RESULTS_FOLDER_PATH, "tbm_900_cases.sql")
+    recorder = om.SqliteRecorder(recorder_path)
+    solver = problem.model.nonlinear_solver
+    solver.add_recorder(recorder)
+    solver.recording_options["record_solver_residuals"] = True
     problem.setup()
     problem.run_model()
     problem.write_outputs()
 
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
+    sorted_variable_residuals = residuals_analyzer(recorder_path)
+   
 
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
+    # Create the folder if it doesn't exist
+    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 767.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.23, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 3361.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 2114.0, atol=1)
+    # Construct the file path
+    file_path = os.path.join(RESULTS_FOLDER_PATH, 'tbm_900_residuals_analysis.csv')
+
+    # Open the file for writing
+    with open(file_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+
+        # Write the header
+        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+
+        # Write the sum of residuals for each iteration
+        for name, sum_res in sorted_variable_residuals.items():
+            writer.writerow([name, sum_res])
 
 
-def test_oad_process_vlm_mission_vector(cleanup):
+def oad_process_twin_otter_400():
+    cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
     logging.getLogger("fastoad.openmdao.variables.variable").disabled = True
 
     # Define used files depending on options
-    xml_file_name = "input_sr22.xml"
-    process_file_name = "oad_process_sr22_mission_vector.yml"
+    xml_file_name = "Source File Twin Otter DHC6-400.xml"
+    process_file_name = "oad_process_twin_otter_400.yml"
 
     configurator = oad.FASTOADProblemConfigurator(pth.join(DATA_FOLDER_PATH, process_file_name))
 
     # Create inputs
-    ref_inputs = pth.join(DATA_FOLDER_PATH, xml_file_name)
-
+    ref_source = pth.join(DATA_FOLDER_PATH, xml_file_name)
+    config_file = pth.join(DATA_FOLDER_PATH, process_file_name)
+    ref_inputs = oad.generate_inputs(config_file, ref_source, overwrite=True)
     # Create problems with inputs
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
+    # Removing previous case and adding a recorder
+    recorder_path = pth.join(RESULTS_FOLDER_PATH, "twin_otter_400_cases.sql")
+    recorder = om.SqliteRecorder(recorder_path)
+    solver = problem.model.nonlinear_solver
+    solver.add_recorder(recorder)
+    solver.recording_options["record_solver_residuals"] = True
     problem.setup()
     problem.run_model()
     problem.write_outputs()
 
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
+    sorted_variable_residuals = residuals_analyzer(recorder_path)
+   
 
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
+    # Create the folder if it doesn't exist
+    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 253.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.15, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1657.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1028.0, atol=1)
+    # Construct the file path
+    file_path = os.path.join(RESULTS_FOLDER_PATH, 'twin_otter_400_residuals_analysis.csv')
 
+    # Open the file for writing
+    with open(file_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
 
-@pytest.mark.skipif(system() != "Windows", reason="OPENVSP is windows dependent platform")
-def test_oad_process_openvsp(cleanup):
-    """
-    Test the overall aircraft design process only on Cirrus with wing positioning under OpenVSP
-    method.
-    """
-    logging.basicConfig(level=logging.WARNING)
-    logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
-    logging.getLogger("fastoad.openmdao.variables.variable").disabled = True
+        # Write the header
+        writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-    # Define used files depending on options
-    xml_file_name = "input_sr22.xml"
-    process_file_name = "oad_process_sr22_openvsp.yml"
-
-    configurator = oad.FASTOADProblemConfigurator(pth.join(DATA_FOLDER_PATH, process_file_name))
-
-    # Create inputs
-    ref_inputs = pth.join(DATA_FOLDER_PATH, xml_file_name)
-
-    # Create problems with inputs
-    problem = configurator.get_problem()
-    problem.write_needed_inputs(ref_inputs)
-    problem.read_inputs()
-    problem.setup()
-    problem.run_model()
-    problem.write_outputs()
-
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
-
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
-
-    # Check values
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 246, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.15, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1650.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1030.0, atol=1)
+        # Write the sum of residuals for each iteration
+        for name, sum_res in sorted_variable_residuals.items():
+            writer.writerow([name, sum_res])
 
 
-def test_oad_process_mission_builder_1_engine(cleanup):
-    """
-    Test the overall aircraft design process only on Cirrus with wing positioning under VLM
-    method with the mission builder from FAST OAD.
-    """
-    # Copy the mission file in the path we indicated in the configuration file
-    mission_path = pth.join(pth.split(resources.__file__)[0], "sizing_mission_fastga.yml")
 
-    if not os.path.exists("D:/tmp"):
-        os.mkdir("D:/tmp")
-
-    shutil.copy(mission_path, "D:/tmp/sizing_mission_fastga.yml")
-
-    logging.basicConfig(level=logging.WARNING)
-    logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
-    logging.getLogger("fastoad.openmdao.variables.variable").disabled = True
-
-    # Define used files depending on options
-    xml_file_name = "input_sr22.xml"
-    process_file_name = "oad_process_sr22_mission_builder.yml"
-
-    configurator = oad.FASTOADProblemConfigurator(pth.join(DATA_FOLDER_PATH, process_file_name))
-
-    # Create inputs
-    ref_inputs = pth.join(DATA_FOLDER_PATH, xml_file_name)
-
-    # Create problems with inputs
-    problem = configurator.get_problem()
-    problem.write_needed_inputs(ref_inputs)
-    problem.read_inputs()
-    problem.setup()
-    problem.run_model()
-    problem.write_outputs()
-
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
-
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
-
-    # Check values
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 250.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.15, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1652.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1027.0, atol=1)
+oad_process_vlm_be76()
 
 
-def test_oad_process_mission_builder_2_engine(cleanup):
-    """
-    Test the overall aircraft design process only on Cirrus with wing positioning under VLM
-    method with the mission builder from FAST OAD.
-    """
-    # Copy the mission file in the path we indicated in the configuration file
-    mission_path = pth.join(pth.split(resources.__file__)[0], "sizing_mission_fastga.yml")
 
-    if not os.path.exists("D:/tmp"):
-        os.mkdir("D:/tmp")
-
-    shutil.copy(mission_path, "D:/tmp/sizing_mission_fastga.yml")
-
-    logging.basicConfig(level=logging.WARNING)
-    logging.getLogger("fastoad.module_management._bundle_loader").disabled = True
-    logging.getLogger("fastoad.openmdao.variables.variable").disabled = True
-
-    # Define used files depending on options
-    xml_file_name = "input_be76.xml"
-    process_file_name = "oad_process_be76_mission_builder.yml"
-
-    configurator = oad.FASTOADProblemConfigurator(pth.join(DATA_FOLDER_PATH, process_file_name))
-
-    # Create inputs
-    ref_inputs = pth.join(DATA_FOLDER_PATH, xml_file_name)
-
-    # Create problems with inputs
-    problem = configurator.get_problem()
-    problem.write_needed_inputs(ref_inputs)
-    problem.read_inputs()
-    problem.setup()
-    problem.run_model()
-    problem.write_outputs()
-
-    if not pth.exists(RESULTS_FOLDER_PATH):
-        os.mkdir(RESULTS_FOLDER_PATH)
-    om.view_connections(
-        problem, outfile=pth.join(RESULTS_FOLDER_PATH, "connections.html"), show_browser=False
-    )
-    om.n2(problem, outfile=pth.join(RESULTS_FOLDER_PATH, "n2.html"), show_browser=False)
-
-    # Check that weight-performances loop correctly converged
-    _check_weight_performance_loop(problem)
-
-    # Check values
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:mission:sizing:fuel", units="kg"), 250.0, atol=1)
-    assert_allclose(problem["data:handling_qualities:stick_fixed_static_margin"], 0.25, atol=1e-2)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:MTOW", units="kg"), 1736.0, atol=1)
-    # noinspection PyTypeChecker
-    assert_allclose(problem.get_val("data:weight:aircraft:OWE", units="kg"), 1106.0, atol=1)
+    
 
 
-def _check_weight_performance_loop(problem):
-    assert_allclose(
-        problem["data:weight:aircraft:OWE"],
-        problem["data:weight:airframe:mass"]
-        + problem["data:weight:propulsion:mass"]
-        + problem["data:weight:systems:mass"]
-        + problem["data:weight:furniture:mass"],
-        rtol=5e-2,
-    )
-    assert_allclose(
-        problem["data:weight:aircraft:MZFW"],
-        problem["data:weight:aircraft:OWE"] + problem["data:weight:aircraft:max_payload"],
-        rtol=5e-2,
-    )
-    assert_allclose(
-        problem["data:weight:aircraft:MTOW"],
-        problem["data:weight:aircraft:OWE"]
-        + problem["data:weight:aircraft:payload"]
-        + problem["data:mission:sizing:fuel"],
-        rtol=5e-2,
-    )
+
+
