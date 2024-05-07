@@ -40,6 +40,23 @@ def cleanup():
     rmtree(RESULTS_FOLDER_PATH, ignore_errors=True)
     rmtree("D:/tmp", ignore_errors=True)
 
+def _MTOW_init(problem):
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    NPAX_design = problem.get_val("data:TLAR:NPAX_design")
+    NPAX = 2+NPAX
+    V_cruise = problem.get_val("data:TLAR:v_cruise")
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    if engine_fuel_type < 3:
+        MTOW = 363.804*NPAX_design + 5.9431*V_cruise
+        return MTOW
+    else:
+        if engine_count < 2:
+            MTOW = 557.1504*NPAX_design + 0.0157*V_cruise**2 + 0.2666*NPAX_design*V_cruise
+            return MTOW
+        else:
+            MTOW = 635.6114*NPAX_design + 0.0229*V_cruise**2
+            return MTOW
+
 
 def residuals_analyzer(recorder_path):
     # Does not bring much info since the bloody reluctance is so high ...
