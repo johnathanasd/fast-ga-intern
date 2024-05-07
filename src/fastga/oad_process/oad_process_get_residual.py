@@ -43,7 +43,7 @@ def cleanup():
 def _MTOW_init(problem):
     engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
     NPAX_design = problem.get_val("data:TLAR:NPAX_design")
-    NPAX = 2+NPAX
+    NPAX = 2 + NPAX
     V_cruise = problem.get_val("data:TLAR:v_cruise")
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
