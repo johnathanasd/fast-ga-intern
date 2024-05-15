@@ -33,29 +33,169 @@ for folder in PATH[1 : len(PATH) - 3]:
     NOTEBOOKS_PATH = pth.join(NOTEBOOKS_PATH, folder)
 NOTEBOOKS_PATH = pth.join(NOTEBOOKS_PATH, "notebooks")
 
-
+_LOGGER = logging.getLogger(__name__)
 
 def cleanup():
     """Empties results folder to avoid any conflicts."""
     rmtree(RESULTS_FOLDER_PATH, ignore_errors=True)
     rmtree("D:/tmp", ignore_errors=True)
 
-def _MTOW_init(problem):
+def _MTOW_init(problem): # MTOW is in lbs
     engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
     NPAX_design = problem.get_val("data:TLAR:NPAX_design")
-    NPAX = 2 + NPAX
-    V_cruise = problem.get_val("data:TLAR:v_cruise")
+    NPAX = 2 + NPAX_design
+    V_cruise = problem.get_val("data:TLAR:v_cruise", units = "knot")
+    V_cruise = 1.68780986 * V_cruise
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
-        MTOW = 363.804*NPAX_design + 5.9431*V_cruise
+        MTOW = 363.804*NPAX + 5.9431*V_cruise
         return MTOW
     else:
         if engine_count < 2:
-            MTOW = 557.1504*NPAX_design + 0.0157*V_cruise**2 + 0.2666*NPAX_design*V_cruise
+            MTOW = 557.1504*NPAX + 0.0157*V_cruise**2 + 0.2666*NPAX*V_cruise
             return MTOW
         else:
-            MTOW = 635.6114*NPAX_design + 0.0229*V_cruise**2
+            MTOW = 635.6114*NPAX + 0.0229*V_cruise**2
             return MTOW
+
+def _wing_area_init(problem,MTOW): # wing area is in ft^2
+    V_app = problem.get_val("data:TLAR:v_approach", units = "knot")
+    V_app = 1.68780986*V_app
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    if engine_fuel_type < 3:
+        wing_area = 60.2509*MTOW/V_app**2 + 0.0056*MTOW
+        return wing_area
+    else:
+        if engine_count < 2:
+            wing_area = 119.2338 * MTOW/V_app**2 + 120.8234
+            return wing_area
+        else:
+            wing_area = 121.7444 * MTOW/V_app**2 + 268.1264
+            return wing_area
+
+def _overall_aircraft_length_init(problem,MTOW):
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    NPAX_design = problem.get_val("data:TLAR:NPAX_design")
+    NPAX = 2 + NPAX_design    
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    if engine_fuel_type < 3:
+        overall_AC_length = 0.0116*MTOW - 0.0008*MTOW*NPAX
+        return overall_AC_length
+    else:
+        if engine_count < 2:
+            overall_AC_length = 0.0028 * MTOW + 2.056 * NPAX
+            return overall_AC_length
+        else:
+            overall_AC_length = np.sqrt(0.4464*MTOW)
+            return overall_AC_length
+
+def _engine_cg_position_init(problem,MTOW,overall_AC_length): # engine cg position w.r.t the nose is in ft
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    if engine_fuel_type < 3:
+        if engine_count < 2:
+            engine_cg_pos =  0.0007*MTOW + 1.0445
+        else:
+            engine_cg_pos = 0.25*overall_AC_length
+        return engine_cg_pos
+    else:
+        if engine_count < 2:
+            engine_cg_pos = 0.0005 * MTOW + 1.0589 
+            return engine_cg_pos
+        else:
+            engine_cg_pos = 0.33*overall_AC_length
+            return engine_cg_pos
+
+def _wing_MAC_and_span_init(problem,wing_area): # both span and MAC qre in ft
+    aspect_ratio = problem.get_val("data:geometry:wing:aspect_ratio")
+    wing_span = np.sqrt(aspect_ratio*wing_area)
+    wing_MAC = np.sqrt(wing_area/aspect_ratio)
+    return wing_span,wing_MAC
+
+def _control_surface_position_init(problem,overall_AC_length): # all distance w.r.t the nose are in ft
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    T_tail = problem.get_val("data:geometry:has_T_tail")
+    if engine_fuel_type < 3:
+        wing_25 = 0.3132 * overall_AC_length
+        wing_25_cg_diff = 0.0514 * overall_AC_length
+        wing_cg = wing_25 + wing_25_cg_diff
+        if T_tail < 1:
+            htp_cg = 0.895 * overall_AC_length
+            vtp_cg = 0.891 * overall_AC_length
+        else:
+            htp_cg = 0.954 * overall_AC_length
+            vtp_cg = 0.935 * overall_AC_length
+        return wing_25, wing_cg, htp_cg, vtp_cg
+    else:
+        if engine_count < 2:
+            wing_25 = 0.351 * overall_AC_length
+            wing_25_cg_diff = 0.0494 * overall_AC_length
+            wing_cg = wing_25 + wing_25_cg_diff
+            if T_tail < 1:
+                htp_cg = 0.914 * overall_AC_length
+                vtp_cg = 0.891 * overall_AC_length
+            else:
+                htp_cg = 0.911 * overall_AC_length
+                vtp_cg = 0.838 * overall_AC_length
+            return wing_25, wing_cg, htp_cg, vtp_cg
+        else:
+            wing_25 = 0.379 * overall_AC_length
+            wing_25_cg_diff = 0.038 * overall_AC_length
+            wing_cg = wing_25 + wing_25_cg_diff
+            if T_tail < 1:
+                htp_cg = 0.906 * overall_AC_length
+                vtp_cg = 0.899 * overall_AC_length
+            else:
+                htp_cg = 0.94 * overall_AC_length
+                vtp_cg = 0.865 * overall_AC_length
+            return wing_25, wing_cg, htp_cg, vtp_cg
+def _htp_vtp_area_init(problem,wing_span,wing_MAC,wing_cg,htp_cg,vtp_cg,wing_area): # both areas are in ft^2
+    L_cg_htp = htp_cg - wing_cg
+    L_cg_vtp = vtp_cg - wing_cg
+    engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
+    engine_count = problem.get_val("data:geometry:propulsion:engine:count")
+    if engine_fuel_type < 3:
+        if engine_count < 2:
+            htp_area = 0.672 * wing_MAC*wing_area/L_cg_htp
+            vtp_area = 0.0443 *wing_span*wing_area/L_cg_vtp
+        else:
+            htp_area = 0.812 * wing_MAC*wing_area/L_cg_htp
+            vtp_area = 0.0657 * wing_span*wing_area/L_cg_vtp
+        return htp_area, vtp_area
+    else:
+        if engine_count < 2:
+            htp_area = 0.672 * wing_MAC*wing_area/L_cg_htp
+            vtp_area = 0.0443 *  wing_span*wing_area/L_cg_vtp
+        else:
+            htp_area = 0.930 * wing_MAC*wing_area/L_cg_htp
+            vtp_area = 0.0707 * wing_span*wing_area/L_cg_vtp
+        return htp_area, vtp_area
+    
+def loop_initialization(problem):
+    MTOW = _MTOW_init(problem)
+    wing_area = _wing_area_init(problem,MTOW)
+    overall_AC_length = _overall_aircraft_length_init(problem,MTOW)
+    engine_cg_pos = _engine_cg_position_init(problem,MTOW,overall_AC_length)
+    wing_span,wing_MAC = _wing_MAC_and_span_init(problem,wing_area)
+    wing_25, wing_cg, htp_cg, vtp_cg = _control_surface_position_init(problem,overall_AC_length)
+    htp_area, vtp_area = _htp_vtp_area_init(problem,wing_span,wing_MAC,wing_cg,htp_cg,vtp_cg,wing_area)
+    # set value
+    MTOW = 0.45359237 * MTOW
+    problem.set_val("data:weight:aircraft:MTOW", val=MTOW, units="kg")
+    problem.set_val("data:geometry:wing:area", val=wing_area, units="ft**2")
+    problem.set_val("data:geometry:horizontal_tail:area", val=htp_area, units="ft**2")
+    problem.set_val("data:geometry:vertical_tail:area", val=vtp_area, units="ft**2")
+    problem.set_val("data:geometry:wing:MAC:length", val=wing_MAC, units="ft")
+    problem.set_val("data:geometry:wing:MAC:at25percent:x", val=wing_25, units="ft")
+    problem.set_val("data:weight:airframe:wing:CG:x", val=wing_cg, units="ft")
+    problem.set_val("data:weight:airframe:horizontal_tail:CG:x", val=htp_cg, units="ft")
+    problem.set_val("data:weight:airframe:vertical_tail:CG:x", val=vtp_cg, units="ft")
+    problem.set_val("data:weight:propulsion:engine:CG:x", val=engine_cg_pos, units="ft")
+
+    return problem
+
 
 
 def residuals_analyzer(recorder_path):
@@ -78,7 +218,7 @@ def residuals_analyzer(recorder_path):
 
       
 
-def oad_process_vlm_sr22():
+def oad_process_vlm_sr22(loop_init = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -110,6 +250,11 @@ def oad_process_vlm_sr22():
     solver.recording_options["record_solver_residuals"] = True
 
     problem.setup()
+
+    if loop_init is True:
+        problem = loop_initialization(problem)
+
+    
     problem.run_model()
     problem.write_outputs()
     sorted_variable_residuals = residuals_analyzer(recorder_path)
@@ -134,7 +279,7 @@ def oad_process_vlm_sr22():
 
     
 
-def oad_process_vlm_be76():
+def oad_process_vlm_be76(loop_init = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -162,6 +307,10 @@ def oad_process_vlm_be76():
     solver.recording_options["record_solver_residuals"] = True
 
     problem.setup()
+
+    if loop_init is True:
+        problem = loop_initialization(problem)
+    _LOGGER.warn(problem.get_val("data:weight:aircraft:MTOW", units="kg"))
     problem.run_model()
     problem.write_outputs()
 
@@ -188,7 +337,7 @@ def oad_process_vlm_be76():
 
 
 
-def oad_process_tbm_900():
+def oad_process_tbm_900(loop_init = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -215,6 +364,8 @@ def oad_process_tbm_900():
     solver.add_recorder(recorder)
     solver.recording_options["record_solver_residuals"] = True
     problem.setup()
+    if loop_init is True:
+        problem = loop_initialization(problem)
     problem.run_model()
     problem.write_outputs()
 
@@ -239,7 +390,7 @@ def oad_process_tbm_900():
             writer.writerow([name, sum_res])
 
 
-def oad_process_twin_otter_400():
+def oad_process_twin_otter_400(loop_init = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -267,6 +418,10 @@ def oad_process_twin_otter_400():
     solver.add_recorder(recorder)
     solver.recording_options["record_solver_residuals"] = True
     problem.setup()
+
+    if loop_init is True:
+        problem = loop_initialization(problem)
+
     problem.run_model()
     problem.write_outputs()
 
@@ -291,8 +446,9 @@ def oad_process_twin_otter_400():
             writer.writerow([name, sum_res])
 
 
+loop_init = True
 
-oad_process_vlm_be76()
+oad_process_vlm_be76(loop_init)
 
 
 

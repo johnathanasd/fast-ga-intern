@@ -143,6 +143,7 @@ class _v2(om.ExplicitComponent):
         self.add_input("data:geometry:wing:area", np.nan, units="m**2")
         self.add_input("data:geometry:cabin:seats:passenger:NPAX_max", val=np.nan)
         self.add_input("data:weight:aircraft:MTOW", np.nan, units="kg")
+        self.add_input("data:TLAR:v_cruise",np.nan, units="knot")
         
         self.add_output("v2:speed", units="m/s")
         self.add_output("v2:angle", units="rad")
@@ -157,7 +158,7 @@ class _v2(om.ExplicitComponent):
         cl_alpha = inputs["data:aerodynamics:wing:low_speed:CL_alpha"]
         delta_cl_takeoff = inputs["data:aerodynamics:flaps:takeoff:CL"]
         cl_max_takeoff = cl_max_clean + delta_cl_takeoff
-
+        v_cruise = inputs["data:TLAR:v_cruise"]
         cd0 = inputs["data:aerodynamics:aircraft:low_speed:CD0"]
         delta_cd_takeoff = inputs["data:aerodynamics:flaps:takeoff:CD"]
 
@@ -169,7 +170,7 @@ class _v2(om.ExplicitComponent):
         CLIMB_GRAD_AEO = 0.083 
         # Climb gradient when all engine are operating, based on CS23.65 for level 1 level 2 low speed aeroplane
 
-        if npax_max > 6 and npax_max < 20:
+        if npax_max > 6 and npax_max < 20 or v_cruise > 250:
             CLIMB_GRAD_AEO = 0.04 
             # Climb gradient when all engine are operating, based on CS23.65 for level 3 level 4 aeroplane
 
@@ -198,6 +199,8 @@ class _v2(om.ExplicitComponent):
             cd = cd0 + delta_cd_takeoff + coeff_k * cl ** 2.0
 
             climb_gradient = thrust / (mtow * g) - cd / cl
+            _LOGGER.warning("thrust / (mtow * g) = %.4f",thrust / (mtow * g))
+            _LOGGER.warning("climb_gradient = %.4f", climb_gradient)
             if climb_gradient > CLIMB_GRAD_AEO:
                 break
             elif iteration_number < 100.0:
@@ -205,12 +208,13 @@ class _v2(om.ExplicitComponent):
                 factor += 0.01
             else:
                 _LOGGER.critical(
-                    "Climb rate is less than %f, adjust weight, propulsion or takeoff "
+                    "Climb rate %.4f is less than %.4f, adjust weight, propulsion or takeoff "
                     "configuration",
+                    climb_gradient,
                     CLIMB_GRAD_AEO,
                 )
                 raise RuntimeError()
-
+        _LOGGER.warning("Out of while loop")
         alpha = (cl - cl0 - delta_cl_takeoff) / cl_alpha
 
         outputs["v2:speed"] = v2
