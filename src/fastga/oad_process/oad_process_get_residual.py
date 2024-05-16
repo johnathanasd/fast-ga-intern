@@ -50,7 +50,7 @@ def _MTOW_init(problem): # MTOW is in lbs
     V_cruise = 1.68780986 * V_cruise
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
-        MTOW = 363.804*NPAX + 5.9431*V_cruise
+        MTOW = 400*NPAX + 6.2*V_cruise
         return MTOW
     else:
         if engine_count < 2:
@@ -67,9 +67,9 @@ def _wing_area_init(problem,MTOW): # wing area is in ft^2
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
         if engine_count < 2:
-            wing_area = 65*MTOW/V_app**2 + 0.02*MTOW
+            wing_area = 130*MTOW/V_app**2 + 0.04*MTOW
         else:
-            wing_area = 119.2338 * MTOW/V_app**2 + 120.8234
+            wing_area = 125 * MTOW/V_app**2 + 120
         return wing_area
     else:
         if engine_count < 2:
@@ -123,15 +123,18 @@ def _control_surface_position_init(problem,overall_AC_length): # all distance w.
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     T_tail = problem.get_val("data:geometry:has_T_tail")
     if engine_fuel_type < 3:
-        wing_25 = 0.3132 * overall_AC_length
+        if engine_count < 2:
+            wing_25 = 0.3132 * overall_AC_length
+        else:
+            wing_25 = 0.351 * overall_AC_length
         wing_25_cg_diff = 0.0514 * overall_AC_length
         wing_cg = wing_25 + wing_25_cg_diff
         if T_tail < 1:
-            htp_cg = 0.895 * overall_AC_length
+            htp_cg = 0.91 * overall_AC_length
             vtp_cg = 0.891 * overall_AC_length
         else:
-            htp_cg = 0.954 * overall_AC_length
-            vtp_cg = 0.935 * overall_AC_length
+            htp_cg = 0.96 * overall_AC_length
+            vtp_cg = 0.93 * overall_AC_length
         return wing_25, wing_cg, htp_cg, vtp_cg
     else:
         if engine_count < 2:
@@ -200,7 +203,41 @@ def loop_initialization(problem):
 
     return problem
 
+def value_comparison(problem):
+    # get value
+    MTOW = problem.get_val("data:weight:aircraft:MTOW", units="kg")
+    wing_area = problem.get_val("data:geometry:wing:area", units="m**2")
+    htp_area = problem.get_val("data:geometry:horizontal_tail:area", units="m**2")
+    vtp_area = problem.get_val("data:geometry:vertical_tail:area", units="m**2")
+    wing_MAC = problem.get_val("data:geometry:wing:MAC:length", units="m")
+    wing_25 = problem.get_val("data:geometry:wing:MAC:at25percent:x", units="m")
+    wing_cg = problem.get_val("data:weight:airframe:wing:CG:x", units="m")
+    htp_cg = problem.get_val("data:weight:airframe:horizontal_tail:CG:x", units="m")
+    vtp_cg = problem.get_val("data:weight:airframe:vertical_tail:CG:x", units="m")
+    engine_cg = problem.get_val("data:weight:propulsion:engine:CG:x", units="m")
+    inp = np.array([MTOW,
+                    wing_area,
+                    htp_area,
+                    vtp_area,
+                    wing_MAC,
+                    wing_25,
+                    wing_cg,
+                    htp_cg,
+                    vtp_cg,
+                    engine_cg])
 
+    variable_names = ["MTOW (kg)",
+                      "Wing Area (m^2)",
+                      "HTP Area (m^2)",
+                      "VTP Area (m^2)",
+                      "Wing MAC (m)",
+                      "Wing 25% MAC (m)",
+                      "Wing CG (m)",
+                      "HTP CG (m)",
+                      "VTP CG (m)",
+                      "Engine CG (m)"]
+
+    return inp, variable_names
 
 def residuals_analyzer(recorder_path):
     # Does not bring much info since the bloody reluctance is so high ...
@@ -222,7 +259,7 @@ def residuals_analyzer(recorder_path):
 
       
 
-def oad_process_vlm_sr22(loop_init = False,recorder_opt = False):
+def oad_process_vlm_sr22(loop_init = False,recorder_opt = False,input_compare = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -256,10 +293,17 @@ def oad_process_vlm_sr22(loop_init = False,recorder_opt = False):
 
     if loop_init is True:
         problem = loop_initialization(problem)
-        
+    
+    if input_compare is True:
+        input_init,variable_names = value_comparison(problem)    
 
     problem.run_model()
     problem.write_outputs()
+    if input_compare is True:
+        input_final,_ = value_comparison(problem)
+        output = np.column_stack((np.array(variable_names).reshape(-1, 1),input_init.astype(str),input_final.astype(str)))
+        return output
+
     if recorder_opt is True:
         sorted_variable_residuals = residuals_analyzer(recorder_path)
     
@@ -280,10 +324,10 @@ def oad_process_vlm_sr22(loop_init = False,recorder_opt = False):
             # Write the sum of residuals for each iteration
             for name, sum_res in sorted_variable_residuals.items():
                 writer.writerow([name, sum_res])
-
+    
     
 
-def oad_process_vlm_be76(loop_init = False,recorder_opt = False):
+def oad_process_vlm_be76(loop_init = False,recorder_opt = False,input_compare = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -317,8 +361,15 @@ def oad_process_vlm_be76(loop_init = False,recorder_opt = False):
     if loop_init is True:
         problem = loop_initialization(problem)
 
+    if input_compare is True:
+        input_init,variable_names = value_comparison(problem)    
+
     problem.run_model()
     problem.write_outputs()
+    if input_compare is True:
+        input_final,_ = value_comparison(problem)
+        output = np.column_stack((np.array(variable_names).reshape(-1, 1),input_init.astype(str),input_final.astype(str)))
+        return output
 
     if recorder_opt is True:
         sorted_variable_residuals = residuals_analyzer(recorder_path)
@@ -344,7 +395,7 @@ def oad_process_vlm_be76(loop_init = False,recorder_opt = False):
 
 
 
-def oad_process_tbm_900(loop_init = False,recorder_opt = False):
+def oad_process_tbm_900(loop_init = False,recorder_opt = False,input_compare = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -375,8 +426,17 @@ def oad_process_tbm_900(loop_init = False,recorder_opt = False):
     problem.setup()
     if loop_init is True:
         problem = loop_initialization(problem)
+    
+    if input_compare is True:
+        input_init,variable_names = value_comparison(problem)    
+
     problem.run_model()
     problem.write_outputs()
+    if input_compare is True:
+        input_final,_ = value_comparison(problem)
+        output = np.column_stack((np.array(variable_names).reshape(-1, 1),input_init.astype(str),input_final.astype(str)))
+        return output
+    
 
     if recorder_opt is True:
         sorted_variable_residuals = residuals_analyzer(recorder_path)
@@ -400,7 +460,7 @@ def oad_process_tbm_900(loop_init = False,recorder_opt = False):
                 writer.writerow([name, sum_res])
 
 
-def oad_process_twin_otter_400(loop_init = False, recorder_opt = False):
+def oad_process_twin_otter_400(loop_init = False, recorder_opt = False,input_compare = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -434,8 +494,15 @@ def oad_process_twin_otter_400(loop_init = False, recorder_opt = False):
     if loop_init is True:
         problem = loop_initialization(problem)
 
+    if input_compare is True:
+        input_init,variable_names = value_comparison(problem)    
+
     problem.run_model()
     problem.write_outputs()
+    if input_compare is True:
+        input_final,_ = value_comparison(problem)
+        output = np.column_stack((np.array(variable_names).reshape(-1, 1),input_init.astype(str),input_final.astype(str)))
+        return output
 
     if recorder_opt is True:
         sorted_variable_residuals = residuals_analyzer(recorder_path)
@@ -459,17 +526,23 @@ def oad_process_twin_otter_400(loop_init = False, recorder_opt = False):
                 writer.writerow([name, sum_res])
 
 
+
+loop_init = True
+#output = oad_process_vlm_be76(loop_init = True,recorder_opt = False,input_compare = True)
+#print(output)
+"""
 loop_init = True
 start_time = time.time()
 oad_process_vlm_sr22(loop_init)
 end_time = time.time()
 sr22_init = end_time - start_time
 
+
 start_time = time.time()
 oad_process_vlm_sr22()
 end_time = time.time()
 sr22 = end_time - start_time
-
+"""
 start_time = time.time()
 oad_process_vlm_be76(loop_init)
 end_time = time.time()
@@ -479,7 +552,7 @@ start_time = time.time()
 oad_process_vlm_be76()
 end_time = time.time()
 be76 = end_time - start_time
-
+"""
 start_time = time.time()
 oad_process_tbm_900(loop_init)
 end_time = time.time()
@@ -500,11 +573,11 @@ oad_process_twin_otter_400()
 end_time = time.time()
 twin_otter = end_time - start_time
 
-print("For SR22 the running time with initialization is {:.6f} sec, without is {:.6f}".format(sr22_init, sr22))
-print("For BE76 the running time with initialization is {:.6f} sec, without is {:.6f}".format(be76_init, be76))
 print("For TBM 900 the running time with initialization is {:.6f} sec, without is {:.6f}".format(tbm_900_init,tbm_900))
 print("For Twin Otter the running time with initialization is {:.6f} sec, without is {:.6f}".format(twin_otter_init,twin_otter))
+"""
 
-
+#print("For SR22 the running time with initialization is {:.6f} sec, without is {:.6f}".format(sr22_init, sr22))
+print("For BE76 the running time with initialization is {:.6f} sec, without is {:.6f}".format(be76_init, be76))
 
 
