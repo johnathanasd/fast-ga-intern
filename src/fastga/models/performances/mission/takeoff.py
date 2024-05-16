@@ -199,8 +199,7 @@ class _v2(om.ExplicitComponent):
             cd = cd0 + delta_cd_takeoff + coeff_k * cl ** 2.0
 
             climb_gradient = thrust / (mtow * g) - cd / cl
-            _LOGGER.warning("thrust / (mtow * g) = %.4f",thrust / (mtow * g))
-            _LOGGER.warning("climb_gradient = %.4f", climb_gradient)
+     
             if climb_gradient > CLIMB_GRAD_AEO:
                 break
             elif iteration_number < 100.0:
@@ -214,7 +213,7 @@ class _v2(om.ExplicitComponent):
                     CLIMB_GRAD_AEO,
                 )
                 raise RuntimeError()
-        _LOGGER.warning("Out of while loop")
+            
         alpha = (cl - cl0 - delta_cl_takeoff) / cl_alpha
 
         outputs["v2:speed"] = v2

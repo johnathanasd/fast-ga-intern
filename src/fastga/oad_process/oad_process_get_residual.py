@@ -24,6 +24,8 @@ import csv
 from numpy.testing import assert_allclose
 import fastoad.api as oad
 from fastga.models.performances.mission import resources
+import time
+
 
 DATA_FOLDER_PATH = pth.join(pth.dirname(__file__), "data")
 RESULTS_FOLDER_PATH = pth.join(pth.dirname(__file__), "results")
@@ -64,7 +66,10 @@ def _wing_area_init(problem,MTOW): # wing area is in ft^2
     engine_fuel_type = problem.get_val("data:propulsion:fuel_type")
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
-        wing_area = 60.2509*MTOW/V_app**2 + 0.0056*MTOW
+        if engine_count < 2:
+            wing_area = 65*MTOW/V_app**2 + 0.02*MTOW
+        else:
+            wing_area = 119.2338 * MTOW/V_app**2 + 120.8234
         return wing_area
     else:
         if engine_count < 2:
@@ -182,8 +187,7 @@ def loop_initialization(problem):
     wing_25, wing_cg, htp_cg, vtp_cg = _control_surface_position_init(problem,overall_AC_length)
     htp_area, vtp_area = _htp_vtp_area_init(problem,wing_span,wing_MAC,wing_cg,htp_cg,vtp_cg,wing_area)
     # set value
-    MTOW = 0.45359237 * MTOW
-    problem.set_val("data:weight:aircraft:MTOW", val=MTOW, units="kg")
+    problem.set_val("data:weight:aircraft:MTOW", val=MTOW, units="lbm")
     problem.set_val("data:geometry:wing:area", val=wing_area, units="ft**2")
     problem.set_val("data:geometry:horizontal_tail:area", val=htp_area, units="ft**2")
     problem.set_val("data:geometry:vertical_tail:area", val=vtp_area, units="ft**2")
@@ -218,7 +222,7 @@ def residuals_analyzer(recorder_path):
 
       
 
-def oad_process_vlm_sr22(loop_init = False):
+def oad_process_vlm_sr22(loop_init = False,recorder_opt = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -239,47 +243,47 @@ def oad_process_vlm_sr22(loop_init = False):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
-    
+    if recorder_opt is True:
     # Removing previous case and adding a recorder
-    recorder_path = pth.join(RESULTS_FOLDER_PATH, "sr22_cases.sql")
-
-
-    recorder = om.SqliteRecorder(recorder_path)
+        recorder_path = pth.join(RESULTS_FOLDER_PATH, "sr22_cases.sql")
+        recorder = om.SqliteRecorder(recorder_path)
     solver = problem.model.nonlinear_solver
-    solver.add_recorder(recorder)
-    solver.recording_options["record_solver_residuals"] = True
+    if recorder_opt is True:
+        solver.add_recorder(recorder)
+        solver.recording_options["record_solver_residuals"] = True
 
     problem.setup()
 
     if loop_init is True:
         problem = loop_initialization(problem)
+        
 
-    
     problem.run_model()
     problem.write_outputs()
-    sorted_variable_residuals = residuals_analyzer(recorder_path)
-   
+    if recorder_opt is True:
+        sorted_variable_residuals = residuals_analyzer(recorder_path)
+    
 
-    # Create the folder if it doesn't exist
-    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
+        # Create the folder if it doesn't exist
+        os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # Construct the file path
-    file_path = os.path.join(RESULTS_FOLDER_PATH, 'sr22_residuals_analysis.csv')
+        # Construct the file path
+        file_path = os.path.join(RESULTS_FOLDER_PATH, 'sr22_residuals_analysis.csv')
 
-    # Open the file for writing
-    with open(file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        # Open the file for writing
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
 
-        # Write the header
-        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+            # Write the header
+            writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-        # Write the sum of residuals for each iteration
-        for name, sum_res in sorted_variable_residuals.items():
-            writer.writerow([name, sum_res])
+            # Write the sum of residuals for each iteration
+            for name, sum_res in sorted_variable_residuals.items():
+                writer.writerow([name, sum_res])
 
     
 
-def oad_process_vlm_be76(loop_init = False):
+def oad_process_vlm_be76(loop_init = False,recorder_opt = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -299,45 +303,48 @@ def oad_process_vlm_be76(loop_init = False):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
-    # Removing previous case and adding a recorder
-    recorder_path = pth.join(RESULTS_FOLDER_PATH, "be76_cases.sql")
-    recorder = om.SqliteRecorder(recorder_path)
+    if recorder_opt is True:
+        # Removing previous case and adding a recorder
+        recorder_path = pth.join(RESULTS_FOLDER_PATH, "be76_cases.sql")
+        recorder = om.SqliteRecorder(recorder_path)
     solver = problem.model.nonlinear_solver
-    solver.add_recorder(recorder)
-    solver.recording_options["record_solver_residuals"] = True
+    if recorder_opt is True:
+        solver.add_recorder(recorder)
+        solver.recording_options["record_solver_residuals"] = True
 
     problem.setup()
 
     if loop_init is True:
         problem = loop_initialization(problem)
-    _LOGGER.warn(problem.get_val("data:weight:aircraft:MTOW", units="kg"))
+
     problem.run_model()
     problem.write_outputs()
 
-    sorted_variable_residuals = residuals_analyzer(recorder_path)
-   
+    if recorder_opt is True:
+        sorted_variable_residuals = residuals_analyzer(recorder_path)
+    
 
-    # Create the folder if it doesn't exist
-    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
+        # Create the folder if it doesn't exist
+        os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # Construct the file path
-    file_path = os.path.join(RESULTS_FOLDER_PATH, 'be76_residuals_analysis.csv')
+        # Construct the file path
+        file_path = os.path.join(RESULTS_FOLDER_PATH, 'be76_residuals_analysis.csv')
 
-    # Open the file for writing
-    with open(file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        # Open the file for writing
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
 
-        # Write the header
-        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+            # Write the header
+            writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-        # Write the sum of residuals for each iteration
-        for name, sum_res in sorted_variable_residuals.items():
-            writer.writerow([name, sum_res])
-
-
+            # Write the sum of residuals for each iteration
+            for name, sum_res in sorted_variable_residuals.items():
+                writer.writerow([name, sum_res])
 
 
-def oad_process_tbm_900(loop_init = False):
+
+
+def oad_process_tbm_900(loop_init = False,recorder_opt = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -357,40 +364,43 @@ def oad_process_tbm_900(loop_init = False):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
-    # Removing previous case and adding a recorder
-    recorder_path = pth.join(RESULTS_FOLDER_PATH, "tbm_900_cases.sql")
-    recorder = om.SqliteRecorder(recorder_path)
+    if recorder_opt is True:
+        # Removing previous case and adding a recorder
+        recorder_path = pth.join(RESULTS_FOLDER_PATH, "tbm_900_cases.sql")
+        recorder = om.SqliteRecorder(recorder_path)
     solver = problem.model.nonlinear_solver
-    solver.add_recorder(recorder)
-    solver.recording_options["record_solver_residuals"] = True
+    if recorder_opt is True:
+        solver.add_recorder(recorder)
+        solver.recording_options["record_solver_residuals"] = True
     problem.setup()
     if loop_init is True:
         problem = loop_initialization(problem)
     problem.run_model()
     problem.write_outputs()
 
-    sorted_variable_residuals = residuals_analyzer(recorder_path)
-   
+    if recorder_opt is True:
+        sorted_variable_residuals = residuals_analyzer(recorder_path)
+    
 
-    # Create the folder if it doesn't exist
-    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
+        # Create the folder if it doesn't exist
+        os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # Construct the file path
-    file_path = os.path.join(RESULTS_FOLDER_PATH, 'tbm_900_residuals_analysis.csv')
+        # Construct the file path
+        file_path = os.path.join(RESULTS_FOLDER_PATH, 'tbm_900_residuals_analysis.csv')
 
-    # Open the file for writing
-    with open(file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        # Open the file for writing
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
 
-        # Write the header
-        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+            # Write the header
+            writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-        # Write the sum of residuals for each iteration
-        for name, sum_res in sorted_variable_residuals.items():
-            writer.writerow([name, sum_res])
+            # Write the sum of residuals for each iteration
+            for name, sum_res in sorted_variable_residuals.items():
+                writer.writerow([name, sum_res])
 
 
-def oad_process_twin_otter_400(loop_init = False):
+def oad_process_twin_otter_400(loop_init = False, recorder_opt = False):
     cleanup()
     """Test the overall aircraft design process with wing positioning under VLM method."""
     logging.basicConfig(level=logging.WARNING)
@@ -411,12 +421,14 @@ def oad_process_twin_otter_400(loop_init = False):
     problem = configurator.get_problem()
     problem.write_needed_inputs(ref_inputs)
     problem.read_inputs()
-    # Removing previous case and adding a recorder
-    recorder_path = pth.join(RESULTS_FOLDER_PATH, "twin_otter_400_cases.sql")
-    recorder = om.SqliteRecorder(recorder_path)
+    if recorder_opt is True:
+        # Removing previous case and adding a recorder
+        recorder_path = pth.join(RESULTS_FOLDER_PATH, "twin_otter_400_cases.sql")
+        recorder = om.SqliteRecorder(recorder_path)
     solver = problem.model.nonlinear_solver
-    solver.add_recorder(recorder)
-    solver.recording_options["record_solver_residuals"] = True
+    if recorder_opt is True:
+        solver.add_recorder(recorder)
+        solver.recording_options["record_solver_residuals"] = True
     problem.setup()
 
     if loop_init is True:
@@ -425,34 +437,73 @@ def oad_process_twin_otter_400(loop_init = False):
     problem.run_model()
     problem.write_outputs()
 
-    sorted_variable_residuals = residuals_analyzer(recorder_path)
-   
+    if recorder_opt is True:
+        sorted_variable_residuals = residuals_analyzer(recorder_path)
+    
 
-    # Create the folder if it doesn't exist
-    os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
+        # Create the folder if it doesn't exist
+        os.makedirs(RESULTS_FOLDER_PATH, exist_ok=True)
 
-    # Construct the file path
-    file_path = os.path.join(RESULTS_FOLDER_PATH, 'twin_otter_400_residuals_analysis.csv')
+        # Construct the file path
+        file_path = os.path.join(RESULTS_FOLDER_PATH, 'twin_otter_400_residuals_analysis.csv')
 
-    # Open the file for writing
-    with open(file_path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        # Open the file for writing
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
 
-        # Write the header
-        writer.writerow(['Variable name', 'Sum of squared Residuals'])
+            # Write the header
+            writer.writerow(['Variable name', 'Sum of squared Residuals'])
 
-        # Write the sum of residuals for each iteration
-        for name, sum_res in sorted_variable_residuals.items():
-            writer.writerow([name, sum_res])
+            # Write the sum of residuals for each iteration
+            for name, sum_res in sorted_variable_residuals.items():
+                writer.writerow([name, sum_res])
 
 
 loop_init = True
+start_time = time.time()
+oad_process_vlm_sr22(loop_init)
+end_time = time.time()
+sr22_init = end_time - start_time
 
+start_time = time.time()
+oad_process_vlm_sr22()
+end_time = time.time()
+sr22 = end_time - start_time
+
+start_time = time.time()
 oad_process_vlm_be76(loop_init)
+end_time = time.time()
+be76_init = end_time - start_time
 
+start_time = time.time()
+oad_process_vlm_be76()
+end_time = time.time()
+be76 = end_time - start_time
 
+start_time = time.time()
+oad_process_tbm_900(loop_init)
+end_time = time.time()
+tbm_900_init = end_time - start_time
 
-    
+start_time = time.time()
+oad_process_tbm_900()
+end_time = time.time()
+tbm_900 = end_time - start_time
+
+start_time = time.time()
+oad_process_twin_otter_400(loop_init)
+end_time = time.time()
+twin_otter_init = end_time - start_time
+
+start_time = time.time()
+oad_process_twin_otter_400()
+end_time = time.time()
+twin_otter = end_time - start_time
+
+print("For SR22 the running time with initialization is {:.6f} sec, without is {:.6f}".format(sr22_init, sr22))
+print("For BE76 the running time with initialization is {:.6f} sec, without is {:.6f}".format(be76_init, be76))
+print("For TBM 900 the running time with initialization is {:.6f} sec, without is {:.6f}".format(tbm_900_init,tbm_900))
+print("For Twin Otter the running time with initialization is {:.6f} sec, without is {:.6f}".format(twin_otter_init,twin_otter))
 
 
 
