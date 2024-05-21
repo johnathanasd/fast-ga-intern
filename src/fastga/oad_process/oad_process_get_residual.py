@@ -51,11 +51,11 @@ def _MTOW_init(problem): # MTOW is in lbs
     V_cruise = 1.68780986 * V_cruise
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
-        MTOW = 400*NPAX + 6.2*V_cruise
+        MTOW = 500*NPAX + 7*V_cruise
         return MTOW
     else:
         if engine_count < 2:
-            MTOW = 557.1504*NPAX + 0.0157*V_cruise**2 + 0.2666*NPAX*V_cruise
+            MTOW = 530*NPAX + 0.012*V_cruise**2 + 0.2*NPAX*V_cruise
             return MTOW
         else:
             MTOW = 601.84*NPAX + 0.0081*V_cruise*range
@@ -88,11 +88,11 @@ def _wing_area_init(problem,MTOW): # wing area is in ft^2
         if engine_count < 2:
             wing_area = 130*MTOW/V_app**2 + 0.04*MTOW
         else:
-            wing_area = 125 * MTOW/V_app**2 + 120
+            wing_area = 150 * MTOW/V_app**2 + 120
         return wing_area
     else:
         if engine_count < 2:
-            wing_area = 119.2338 * MTOW/V_app**2 + 120.8234
+            wing_area = 135 * MTOW/V_app**2 + 150
             return wing_area
         else:
             wing_area = 121.7444 * MTOW/V_app**2 + 268.1264
@@ -125,7 +125,7 @@ def _engine_cg_position_init(problem,MTOW,overall_AC_length): # engine cg positi
         return engine_cg_pos
     else:
         if engine_count < 2:
-            engine_cg_pos = 0.0005 * MTOW + 1.0589 
+            engine_cg_pos = 0.00075 * MTOW + 1.589 
             return engine_cg_pos
         else:
             engine_cg_pos = 0.33*overall_AC_length
@@ -161,11 +161,11 @@ def _control_surface_position_init(problem,overall_AC_length): # all distance w.
             wing_25_cg_diff = 0.0494 * overall_AC_length
             wing_cg = wing_25 + wing_25_cg_diff
             if T_tail < 1:
-                htp_cg = 0.914 * overall_AC_length
-                vtp_cg = 0.891 * overall_AC_length
+                htp_cg = 0.92 * overall_AC_length
+                vtp_cg = 0.895 * overall_AC_length
             else:
-                htp_cg = 0.911 * overall_AC_length
-                vtp_cg = 0.838 * overall_AC_length
+                htp_cg = 0.92 * overall_AC_length
+                vtp_cg = 0.85 * overall_AC_length
             return wing_25, wing_cg, htp_cg, vtp_cg
         else:
             wing_25 = 0.379 * overall_AC_length
@@ -215,7 +215,7 @@ def _wing_weight(problem,wing_area,MTOW,OWE):
     V_cruise = 1.68780986 * V_cruise # ft/s
     q = 0.5*rho*V_cruise**2 # lb/ft^2
     AR_w = problem.get_val("data:geometry:wing:aspect_ratio")
-    Nz = problem.get_val("data:mission:landing:cs23:sizing_factor:ultimate_aircraft")
+    Nz = problem.get_val("data:mission:sizing:cs23:sizing_factor:ultimate_aircraft")
     t_c = problem.get_val("data:geometry:wing:thickness_ratio")
     wing_TR = problem.get_val("data:geometry:wing:taper_ratio")
     wing_sweep_25 = problem.get_val("data:geometry:wing:sweep_25",units = "rad")
@@ -224,6 +224,41 @@ def _wing_weight(problem,wing_area,MTOW,OWE):
     frac2 = 100*t_c/np.cos(wing_sweep_25)
     wing_weight = 0.036*pow(wing_area,0.758)*pow(fw,0.0035)*pow(frac1,0.6)*pow(q,0.006)*pow(wing_TR,0.04)*pow(frac2,-0.3)*pow(Nz*MTOW,0.49)
     return wing_weight
+
+def _htp_weight(problem,htp_area,MTOW):
+    altitude = problem.get_val("data:mission:sizing:main_route:cruise:altitude",units="m")
+    rho = _atmosphere(altitude)
+    rho = 0.0624279606*rho
+    V_cruise = problem.get_val("data:TLAR:v_cruise", units = "knot")
+    V_cruise = 1.68780986 * V_cruise # ft/s
+    Nz = problem.get_val("data:mission:sizing:cs23:sizing_factor:ultimate_aircraft")
+    q = 0.5*rho*V_cruise**2 # lb/ft^2
+    htp_sweep_25 = problem.get_val("data:geometry:horizontal_tail:sweep_25",units="rad")
+    htp_TR = problem.get_val("data:geometry:horizontal_tail:taper_ratio")
+    AR_htp = problem.get_val("data:geometry:horizontal_tail:aspect_ratio")
+    t_c = problem.get_val("data:geometry:wing:thickness_ratio")
+    frac1 = 100*t_c/np.cos(htp_sweep_25)
+    frac2 = AR_htp/np.cos(htp_sweep_25)**2
+    htp_weight = 0.016*pow(Nz*MTOW,0.414)*pow(q,0.168)*pow(htp_area,0.896)*pow(frac1,-0.12)*pow(frac2,0.043)*pow(htp_TR,-0.02)
+    return htp_weight
+
+def _vtp_weight(problem,vtp_area,MTOW):
+    altitude = problem.get_val("data:mission:sizing:main_route:cruise:altitude",units="m")
+    rho = _atmosphere(altitude)
+    rho = 0.0624279606*rho
+    V_cruise = problem.get_val("data:TLAR:v_cruise", units = "knot")
+    V_cruise = 1.68780986 * V_cruise # ft/s
+    Nz = problem.get_val("data:mission:sizing:cs23:sizing_factor:ultimate_aircraft")
+    q = 0.5*rho*V_cruise**2 # lb/ft^2
+    has_T_tail = problem.get_val("data:geometry:has_T_tail")
+    vtp_sweep_25 = problem.get_val("data:geometry:vertical_tail:sweep_25",units="rad")
+    vtp_TR = problem.get_val("data:geometry:vertical_tail:taper_ratio")
+    AR_vtp = problem.get_val("data:geometry:vertical_tail:aspect_ratio")
+    t_c = problem.get_val("data:geometry:wing:thickness_ratio")
+    frac1 = 100*t_c/np.cos(vtp_sweep_25)
+    frac2 = AR_vtp/np.cos(vtp_sweep_25)**2
+    vtp_weight = 0.073*(1+0.2*has_T_tail)*pow(Nz*MTOW,0.376)*pow(q,0.122)*pow(vtp_area,0.873)*pow(frac1,-0.49)*pow(frac2,0.357)*pow(vtp_TR,0.039)
+    return vtp_weight
 
 def loop_initialization(problem):
     MTOW = _MTOW_init(problem)
@@ -236,6 +271,8 @@ def loop_initialization(problem):
     OWE = _OWE_init(problem,MTOW)
     MLW = _MLW_init(problem,OWE)
     wing_weight = _wing_weight(problem,wing_area,MTOW,OWE)
+    htp_weight = _htp_weight(problem,htp_area,MTOW)
+    vtp_weight = _vtp_weight(problem,vtp_area,MTOW)
     # set value
     problem.set_val("data:weight:aircraft:MTOW", val=MTOW, units="lbm")
     problem.set_val("data:geometry:wing:area", val=wing_area, units="ft**2")
@@ -250,6 +287,8 @@ def loop_initialization(problem):
     problem.set_val("data:weight:aircraft:OWE", val=OWE, units="lbm")
     problem.set_val("data:weight:aircraft:MLW", val=MLW, units="lbm")
     problem.set_val("data:weight:airframe:wing:mass", val=wing_weight, units="lbm")
+    problem.set_val("data:weight:airframe:horizontal_tail:mass", val=htp_weight, units="lbm")
+    problem.set_val("data:weight:airframe:vertical_tail:mass", val=vtp_weight, units="lbm")
 
     return problem
 
@@ -579,16 +618,16 @@ def oad_process_twin_otter_400(loop_init = False, recorder_opt = False,input_com
 
 loop_init = True
 
-output = oad_process_tbm_900(loop_init = True,recorder_opt = False,input_compare = True)
-print(output)
+#output = oad_process_vlm_be76(loop_init = True,recorder_opt = False,input_compare = True)
+#print(output)
 
-"""
+
 loop_init = True
 start_time = time.time()
 oad_process_vlm_sr22(loop_init)
 end_time = time.time()
 sr22_init = end_time - start_time
-
+print(sr22_init)
 
 start_time = time.time()
 oad_process_vlm_sr22()
@@ -624,14 +663,11 @@ start_time = time.time()
 oad_process_twin_otter_400()
 end_time = time.time()
 twin_otter = end_time - start_time
-"""
-
-#print("For TBM 900 the running time with initialization is {:.6f} sec, without is {:.6f}".format(tbm_900_init,tbm_900))
-
-#print("For Twin Otter the running time with initialization is {:.6f} sec, without is {:.6f}".format(twin_otter_init,twin_otter))
 
 
-#print("For SR22 the running time with initialization is {:.6f} sec, without is {:.6f}".format(sr22_init, sr22))
-#print("For BE76 the running time with initialization is {:.6f} sec, without is {:.6f}".format(be76_init, be76))
+print("For TBM 900 the running time with initialization is {:.6f} sec, without is {:.6f}".format(tbm_900_init,tbm_900))
+print("For Twin Otter the running time with initialization is {:.6f} sec, without is {:.6f}".format(twin_otter_init,twin_otter))
+print("For SR22 the running time with initialization is {:.6f} sec, without is {:.6f}".format(sr22_init, sr22))
+print("For BE76 the running time with initialization is {:.6f} sec, without is {:.6f}".format(be76_init, be76))
 
 

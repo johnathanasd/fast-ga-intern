@@ -110,8 +110,8 @@ class ComputeLocalReynolds(om.ExplicitComponent):
         self.add_input("data:geometry:horizontal_tail:tip:chord", val=np.nan, units="m")
         self.add_input("data:aerodynamics:horizontal_tail:efficiency", val=0.9)
 
-        self.add_output("data:aerodynamics:horizontal_tail:root:low_speed:reynolds")
-        self.add_output("data:aerodynamics:horizontal_tail:tip:low_speed:reynolds")
+        self.add_output("data:aerodynamics:horizontal_tail:root:low_speed:reynolds", res_ref=10)
+        self.add_output("data:aerodynamics:horizontal_tail:tip:low_speed:reynolds", res_ref=10)
         self.add_output("xfoil:mach")
 
         self.declare_partials("*", "*", method="fd")

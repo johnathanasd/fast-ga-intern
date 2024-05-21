@@ -60,7 +60,7 @@ class _XfoilGroupPrep(ExplicitComponent):
         self.add_input("data:Xfoil_pre_processing:reynolds", val=np.nan)
 
         self.add_output("xfoil_group:mach")
-        self.add_output("xfoil_group:reynolds")
+        self.add_output("xfoil_group:reynolds",res_ref=10)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 

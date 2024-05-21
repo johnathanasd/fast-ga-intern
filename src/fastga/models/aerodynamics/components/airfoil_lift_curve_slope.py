@@ -124,9 +124,9 @@ class ComputeLocalReynolds(om.ExplicitComponent):
         self.add_input("data:aerodynamics:horizontal_tail:efficiency", val=0.9)
         self.add_input("data:geometry:vertical_tail:MAC:length", val=np.nan, units="m")
 
-        self.add_output("data:aerodynamics:wing:MAC:low_speed:reynolds")
-        self.add_output("data:aerodynamics:horizontal_tail:MAC:low_speed:reynolds")
-        self.add_output("data:aerodynamics:vertical_tail:MAC:low_speed:reynolds")
+        self.add_output("data:aerodynamics:wing:MAC:low_speed:reynolds",res_ref=10)
+        self.add_output("data:aerodynamics:horizontal_tail:MAC:low_speed:reynolds",res_ref=10)
+        self.add_output("data:aerodynamics:vertical_tail:MAC:low_speed:reynolds",res_ref=10)
 
         self.add_output("xfoil:mach")
 

@@ -55,7 +55,7 @@ class ComputePropellerCoefficientMap(om.Group):
     def setup(self):
         ivc = om.IndepVarComp()
         ivc.add_output("data:aerodynamics:propeller:coefficient_map:mach", val=0.0)
-        ivc.add_output("data:aerodynamics:propeller:coefficient_map:reynolds", val=1e6)
+        ivc.add_output("data:aerodynamics:propeller:coefficient_map:reynolds", val=1e6, res_ref=10)
         self.add_subsystem("propeller_coeff_map_aero_conditions", ivc, promotes=["*"])
         for profile in self.options["sections_profile_name_list"]:
             self.add_subsystem(
