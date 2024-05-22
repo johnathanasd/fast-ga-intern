@@ -51,7 +51,10 @@ def _MTOW_init(problem): # MTOW is in lbs
     V_cruise = 1.68780986 * V_cruise
     engine_count = problem.get_val("data:geometry:propulsion:engine:count")
     if engine_fuel_type < 3:
-        MTOW = 500*NPAX + 7*V_cruise
+        if engine_count <2:
+            MTOW = 500*NPAX + 0.005*V_cruise*range
+        else:
+            MTOW = 530*NPAX + 0.02*V_cruise**2 + 0.2*NPAX*V_cruise
         return MTOW
     else:
         if engine_count < 2:
@@ -339,7 +342,9 @@ def residuals_analyzer(recorder_path):
         for residual in case.residuals:
             # Because those are matrix and I don't want to deal with it
             #if "aerodynamics:propeller" not in residual:
-            variable_dict[residual] = variable_dict[residual] + np.sum(np.abs(case.residuals[residual]))
+            #variable_dict[residual] = variable_dict[residual] + np.sum(np.abs(case.residuals[residual]))
+            variable_dict[residual] = np.sum(np.abs(case.residuals[residual]))
+
     sorted_variable_dict = dict(sorted(variable_dict.items(), key=lambda x: x[1], reverse=True))
 
     return sorted_variable_dict

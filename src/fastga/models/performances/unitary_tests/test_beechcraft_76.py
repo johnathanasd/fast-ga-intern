@@ -316,9 +316,7 @@ def test_loop_cruise_distance():
     assert m_total == pytest.approx(140, abs=1)
     climb_distance = problem.get_val("data:mission:sizing:main_route:climb:distance", units="NM")
     cruise_distance = problem.get_val("data:mission:sizing:main_route:cruise:distance", units="NM")
-    descent_distance = problem.get_val(
-        "data:mission:sizing:main_route:descent:distance", units="NM"
-    )
+    descent_distance = problem.get_val("data:mission:sizing:main_route:descent:distance", units="NM")
     total_distance = problem.get_val("data:TLAR:range", units="NM")
     error_distance = total_distance - (climb_distance + cruise_distance + descent_distance)
     assert error_distance == pytest.approx(0.0, abs=1e-1)
