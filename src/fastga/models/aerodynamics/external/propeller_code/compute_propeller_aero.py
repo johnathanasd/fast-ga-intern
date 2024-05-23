@@ -60,7 +60,7 @@ class ComputePropellerPerformance(om.Group):
     def setup(self):
         ivc = om.IndepVarComp()
         ivc.add_output("data:aerodynamics:propeller:mach", val=0.0)
-        ivc.add_output("data:aerodynamics:propeller:reynolds", val=1e6,res_ref=10)
+        ivc.add_output("data:aerodynamics:propeller:reynolds", val=1e6)
         self.add_subsystem("propeller_efficiency_aero_conditions", ivc, promotes=["*"])
         for profile in self.options["sections_profile_name_list"]:
             self.add_subsystem(
