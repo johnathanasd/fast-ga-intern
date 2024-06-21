@@ -44,12 +44,12 @@
       </flap>
       <fuselage>
         <PAX_length units="m" is_input="True">5.64<!--(5.64 before) length of the passenger compartment--></PAX_length>
-        <front_length units="m" is_input="True">4<!--(2.59) length of the front cone of the aircraft--></front_length>
+        <front_length units="m" is_input="True">2.75<!--(2.59) length of the front cone of the aircraft--></front_length>
         <length units="m" is_input="True">14.5<!--(11.87, 15.77) total length of the aircraft--></length>
         <luggage_length units="m" is_input="True">1.3<!--(2.07) length of the luggage compartment--></luggage_length>
         <maximum_height units="m" is_input="True">2.09<!--maximum fuselage height--></maximum_height>
         <maximum_width units="m" is_input="True">1.865<!--(1.42,1.71) maximum fuselage width--></maximum_width>
-        <rear_length units="m" is_input="True">5<!--(3.05) length of the rear cone of the aircraft--></rear_length>
+        <rear_length units="m" is_input="True">4.75<!--(3.05) length of the rear cone of the aircraft--></rear_length>
       </fuselage>
       <horizontal_tail>
         <aspect_ratio is_input="True">4.35<!--horizontal tail aspect ratio--></aspect_ratio>
@@ -60,7 +60,7 @@
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.63<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">6.3<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
