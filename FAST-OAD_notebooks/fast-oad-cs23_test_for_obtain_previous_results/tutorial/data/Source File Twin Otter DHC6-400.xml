@@ -60,7 +60,7 @@
         <MAC>
           <at25percent>
             <x>
-              <from_wingMAC25 units="m" is_input="True">7.63<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+              <from_wingMAC25 units="m" is_input="True">7.33<!--(prev 5.97) distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
             </x>
           </at25percent>
         </MAC>
@@ -256,7 +256,7 @@
           </sizing_factor>
         </cs23>
         <landing>
-          <elevator_angle units="deg" is_input="True">-30<!--elevator maximum angle during landing phase in sizing mission--></elevator_angle>
+          <elevator_angle units="deg" is_input="True">-25<!--elevator maximum angle during landing phase in sizing mission--></elevator_angle>
           <flap_angle units="deg">37.5</flap_angle>
           <target_sideslip units="deg" is_input="True">15.0</target_sideslip>
         </landing>
@@ -265,7 +265,7 @@
         </initial_climb>
         <takeoff>
           <energy units="W*h" is_input="False">0.0</energy>
-          <elevator_angle units="deg" is_input="True">-30<!--elevator maximum angle during takeoff phase in sizing mission--></elevator_angle>
+          <elevator_angle units="deg" is_input="True">-25<!--elevator maximum angle during takeoff phase in sizing mission--></elevator_angle>
           <friction_coefficient_no_brake is_input="True">0.03<!--friction coefficient used during the computation of the takeoff phase--></friction_coefficient_no_brake>
           <thrust_rate is_input="True">1.0<!--thrust rate during takeoff phase--></thrust_rate>
         </takeoff>
